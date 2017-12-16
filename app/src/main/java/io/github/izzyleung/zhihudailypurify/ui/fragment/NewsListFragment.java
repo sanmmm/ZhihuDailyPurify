@@ -58,7 +58,7 @@ public class NewsListFragment extends Fragment
         View view = inflater.inflate(R.layout.fragment_news_list, container, false);
 
         assert view != null;
-        RecyclerView mRecyclerView = (RecyclerView) view.findViewById(R.id.news_list);
+        RecyclerView mRecyclerView = view.findViewById(R.id.news_list);
         mRecyclerView.setHasFixedSize(!isToday);
 
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
@@ -68,7 +68,7 @@ public class NewsListFragment extends Fragment
         mAdapter = new NewsAdapter(newsList);
         mRecyclerView.setAdapter(mAdapter);
 
-        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
+        mSwipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.color_primary);
 

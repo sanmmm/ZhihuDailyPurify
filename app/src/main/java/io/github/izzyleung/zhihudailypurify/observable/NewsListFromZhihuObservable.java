@@ -3,9 +3,6 @@ package io.github.izzyleung.zhihudailypurify.observable;
 import android.text.TextUtils;
 import android.util.Pair;
 
-import com.annimon.stream.Optional;
-import com.annimon.stream.Stream;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,6 +13,7 @@ import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import io.github.izzyleung.zhihudailypurify.bean.DailyNews;
 import io.github.izzyleung.zhihudailypurify.bean.Question;
@@ -119,7 +117,7 @@ public class NewsListFromZhihuObservable {
         String dailyTitle = story.getDailyTitle();
 
         List<Question> questions = getQuestions(document, dailyTitle);
-        if (Stream.of(questions).allMatch(Question::isValidZhihuQuestion)) {
+        if (questions.stream().allMatch(Question::isValidZhihuQuestion)) {
             result = new DailyNews();
 
             result.setDailyTitle(dailyTitle);

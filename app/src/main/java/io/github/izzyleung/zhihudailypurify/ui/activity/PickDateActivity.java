@@ -25,7 +25,7 @@ public class PickDateActivity extends BaseActivity {
         Calendar nextDay = Calendar.getInstance();
         nextDay.add(Calendar.DAY_OF_YEAR, 1);
 
-        CalendarPickerView calendarPickerView = (CalendarPickerView) findViewById(R.id.calendar_view);
+        CalendarPickerView calendarPickerView = findViewById(R.id.calendar_view);
         assert calendarPickerView != null;
         calendarPickerView.init(Constants.Dates.birthday, nextDay.getTime())
                 .withSelectedDate(Calendar.getInstance().getTime());

@@ -16,7 +16,6 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.annimon.stream.Stream;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
@@ -211,7 +210,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
     }
 
     private String[] getQuestionTitlesAsStringArray(DailyNews dailyNews) {
-        return Stream.of(dailyNews.getQuestions()).map(Question::getTitle).toArray(String[]::new);
+        return dailyNews.getQuestions().stream().map(Question::getTitle).toArray(String[]::new);
     }
 
     public static class CardViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -227,10 +226,10 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
 
             this.mClickResponseListener = clickResponseListener;
 
-            newsImage = (ImageView) v.findViewById(R.id.thumbnail_image);
-            questionTitle = (TextView) v.findViewById(R.id.question_title);
-            dailyTitle = (TextView) v.findViewById(R.id.daily_title);
-            overflow = (ImageView) v.findViewById(R.id.card_share_overflow);
+            newsImage = v.findViewById(R.id.thumbnail_image);
+            questionTitle = v.findViewById(R.id.question_title);
+            dailyTitle = v.findViewById(R.id.daily_title);
+            overflow = v.findViewById(R.id.card_share_overflow);
 
             v.setOnClickListener(this);
             overflow.setOnClickListener(this);

@@ -15,11 +15,6 @@
         <item name="android:drawSelectorOnTop">false</item>
     </style>
 
-    <style name="mainPageTabsStyle" parent="baseLayoutParam">
-        <item name="android:layout_height">48dp</item>
-        <item name="android:background">@color/color_primary</item>
-    </style>
-
     <style name="mainPagerStyle" parent="baseLayoutParam">
         <item name="android:layout_height">wrap_content</item>
     </style>

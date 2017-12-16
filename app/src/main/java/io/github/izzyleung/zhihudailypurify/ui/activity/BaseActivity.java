@@ -21,10 +21,10 @@ public class BaseActivity extends AppCompatActivity {
 
         setContentView(layoutResID);
 
-        mToolBar = (Toolbar) findViewById(R.id.toolbar);
+        mToolBar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolBar);
 
-        mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
+        mCoordinatorLayout = findViewById(R.id.coordinator_layout);
     }
 
     @Override

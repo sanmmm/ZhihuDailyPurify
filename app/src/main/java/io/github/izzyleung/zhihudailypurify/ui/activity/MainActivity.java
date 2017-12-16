@@ -27,8 +27,8 @@ public class MainActivity extends BaseActivity {
 
         super.onCreate(savedInstanceState);
 
-        TabLayout tabs = (TabLayout) findViewById(R.id.main_pager_tabs);
-        ViewPager viewPager = (ViewPager) findViewById(R.id.main_pager);
+        TabLayout tabs = findViewById(R.id.main_pager_tabs);
+        ViewPager viewPager = findViewById(R.id.main_pager);
         assert tabs != null;
         assert viewPager != null;
         viewPager.setOffscreenPageLimit(PAGE_COUNT);
@@ -37,7 +37,7 @@ public class MainActivity extends BaseActivity {
         viewPager.setAdapter(adapter);
         tabs.setupWithViewPager(viewPager);
 
-        FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.fab_pick_date);
+        FloatingActionButton floatingActionButton = findViewById(R.id.fab_pick_date);
         assert floatingActionButton != null;
         floatingActionButton.setOnClickListener(v -> prepareIntent(PickDateActivity.class));
     }

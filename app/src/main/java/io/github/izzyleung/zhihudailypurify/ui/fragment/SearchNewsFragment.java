@@ -30,7 +30,7 @@ public class SearchNewsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
         assert view != null;
 
-        RecyclerView mRecyclerView = (RecyclerView) view.findViewById(R.id.search_result_list);
+        RecyclerView mRecyclerView = view.findViewById(R.id.search_result_list);
         mRecyclerView.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
 

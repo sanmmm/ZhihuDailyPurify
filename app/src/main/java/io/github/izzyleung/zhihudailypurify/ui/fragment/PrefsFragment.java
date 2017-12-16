@@ -54,7 +54,7 @@ public class PrefsFragment extends PreferenceFragment
         apacheLicenseDialog.setCancelable(true);
         apacheLicenseDialog.setContentView(R.layout.dialog_apache_license);
 
-        TextView textView = (TextView) apacheLicenseDialog.findViewById(R.id.dialog_text);
+        TextView textView = apacheLicenseDialog.findViewById(R.id.dialog_text);
 
         StringBuilder sb = new StringBuilder();
         sb.append(getString(R.string.licences_header)).append("\n");
@@ -69,7 +69,7 @@ public class PrefsFragment extends PreferenceFragment
         sb.append("\n\n").append(getString(R.string.apache_license));
         textView.setText(sb.toString());
 
-        Button closeDialogButton = (Button) apacheLicenseDialog.findViewById(R.id.close_dialog_button);
+        Button closeDialogButton = apacheLicenseDialog.findViewById(R.id.close_dialog_button);
 
         closeDialogButton.setOnClickListener(view -> apacheLicenseDialog.dismiss());
 

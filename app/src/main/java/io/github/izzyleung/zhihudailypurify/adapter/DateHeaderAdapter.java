@@ -65,7 +65,7 @@ public class DateHeaderAdapter implements StickyHeadersAdapter<DateHeaderAdapter
         public HeaderViewHolder(View itemView) {
             super(itemView);
 
-            title = (TextView) itemView.findViewById(R.id.date_text);
+            title = itemView.findViewById(R.id.date_text);
         }
     }
 }
