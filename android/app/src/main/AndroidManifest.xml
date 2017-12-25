@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest
+    package="io.github.izzyleung.zhihudailypurify"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-sdk android:minSdkVersion="24"
+          android:targetSdkVersion="27"/>
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <application
+        android:name=".ZhihuDailyPurifyApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.ZhihuDailyPurify.Light.NoActionBar"
+        tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+
+        <activity
+            android:name=".ui.activity.MainActivity"
+            android:alwaysRetainTaskState="true"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.activity.SearchActivity"
+            android:alwaysRetainTaskState="true"/>
+
+        <activity
+            android:name=".ui.activity.PickDateActivity"
+            android:alwaysRetainTaskState="true"
+            android:label="@string/action_pick_date"/>
+
+        <activity
+            android:name=".ui.activity.SingleDayNewsActivity"
+            android:alwaysRetainTaskState="true"/>
+
+        <activity
+            android:name=".ui.activity.PrefsActivity"
+            android:label="@string/action_settings"
+            android:theme="@style/Theme.ZhihuDailyPurify.Prefs"/>
+    </application>
+</manifest>
