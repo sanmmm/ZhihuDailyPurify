@@ -8,8 +8,9 @@ import io.reactivex.Single;
 public class ZhihuDailyPurifyServer {
     private ZhihuDailyPurifyServer() {}
 
-    private static final String ZHIHU_DAILY_PURIFY = "https://zhihudailypurify.herokuapp.com/news/";
-    private static final String ZHIHU_DAILY_PURIFY_SEARCH = "https://zhihudailypurify.herokuapp.com/search/";
+    private static final String ZHIHU_DAILY_PURIFY_BASE = "https://zhihudailypurify.herokuapp.com/";
+    private static final String ZHIHU_DAILY_PURIFY = ZHIHU_DAILY_PURIFY_BASE + "news/";
+    private static final String ZHIHU_DAILY_PURIFY_SEARCH = ZHIHU_DAILY_PURIFY_BASE + "search/";
 
     public static Single<ZhihuDailyPurify.Feed> feedForDate(String date) throws IOException {
         InputStream inputStream = Network.openInputStream(ZHIHU_DAILY_PURIFY + date);

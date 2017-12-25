@@ -10,7 +10,7 @@ public class Network {
 
     }
 
-    public static InputStream openInputStream(String address) throws IOException {
+    static InputStream openInputStream(String address) throws IOException {
         URL url = new URL(address);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
