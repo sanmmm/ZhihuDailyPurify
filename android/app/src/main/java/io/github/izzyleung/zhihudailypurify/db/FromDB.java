@@ -1,5 +1,7 @@
 package io.github.izzyleung.zhihudailypurify.db;
 
+import android.util.Log;
+
 import io.github.izzyleung.ZhihuDailyPurify;
 import io.github.izzyleung.zhihudailypurify.ZhihuDailyPurifyApplication;
 import io.reactivex.Single;

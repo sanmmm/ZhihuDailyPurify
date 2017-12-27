@@ -1,4 +1,4 @@
-package io.github.izzyleung.zhihudailypurify.adapter;
+package io.github.izzyleung.zhihudailypurify.ui.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -10,16 +10,14 @@ import android.widget.TextView;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersAdapter;
 
 import java.text.DateFormat;
-import java.text.ParseException;
-import java.util.Calendar;
+import java.util.Date;
 
 import io.github.izzyleung.ZhihuDailyPurify;
 import io.github.izzyleung.zhihudailypurify.R;
-import io.github.izzyleung.zhihudailypurify.support.Constants;
+import io.github.izzyleung.zhihudailypurify.support.LocalDate;
 
 public class DateHeaderAdapter implements StickyHeadersAdapter<DateHeaderAdapter.HeaderViewHolder> {
     private ZhihuDailyPurify.Feed feed;
-
     private DateFormat dateFormat = DateFormat.getDateInstance();
 
     public DateHeaderAdapter(ZhihuDailyPurify.Feed feed) {
@@ -41,16 +39,10 @@ public class DateHeaderAdapter implements StickyHeadersAdapter<DateHeaderAdapter
 
     @Override
     public void onBindViewHolder(HeaderViewHolder viewHolder, int position) {
-        Calendar calendar = Calendar.getInstance();
+        String dateFromNews = feed.getNewsList().get(position).getDate();
+        Date date = LocalDate.of(dateFromNews).plusDays(-1).getTime();
 
-        try {
-            calendar.setTime(Constants.Dates.simpleDateFormat.parse(feed.getNewsList().get(position).getDate()));
-            calendar.add(Calendar.DAY_OF_YEAR, -1);
-        } catch (ParseException ignored) {
-
-        }
-
-        viewHolder.title.setText(dateFormat.format(calendar.getTime()));
+        viewHolder.title.setText(dateFormat.format(date));
     }
 
     @Override

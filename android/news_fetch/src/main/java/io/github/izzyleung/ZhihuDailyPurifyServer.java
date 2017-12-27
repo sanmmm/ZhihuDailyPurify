@@ -3,6 +3,7 @@ package io.github.izzyleung;
 import java.io.IOException;
 import java.io.InputStream;
 
+import io.github.izzyleung.utils.Network;
 import io.reactivex.Single;
 
 public class ZhihuDailyPurifyServer {

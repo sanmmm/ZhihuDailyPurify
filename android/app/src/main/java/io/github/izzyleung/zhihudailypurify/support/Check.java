@@ -12,7 +12,7 @@ public final class Check {
 
     public static boolean isZhihuClientInstalled() {
         try {
-            return preparePackageManager().getPackageInfo(Constants.Information.ZHIHU_PACKAGE_ID, PackageManager.GET_ACTIVITIES) != null;
+            return preparePackageManager().getPackageInfo(Constants.PackageID.ZHIHU, PackageManager.GET_ACTIVITIES) != null;
         } catch (PackageManager.NameNotFoundException ignored) {
             return false;
         }

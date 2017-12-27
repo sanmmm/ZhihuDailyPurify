@@ -1,4 +1,4 @@
-package io.github.izzyleung.zhihudailypurify.adapter;
+package io.github.izzyleung.zhihudailypurify.ui.adapter;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -81,7 +81,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
                     if (item.getItemId() == R.id.action_share_url) {
                         share(context, position);
                     }
-                    
+
                     return true;
                 });
                 popup.show();
@@ -96,7 +96,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
 
         if (news.getQuestionsList().size() > 1) {
             holder.questionTitle.setText(news.getTitle());
-            holder.dailyTitle.setText(Constants.Strings.MULTIPLE_DISCUSSION);
+            holder.dailyTitle.setText(MULTIPLE_DISCUSSION);
         } else {
             holder.questionTitle.setText(news.getQuestionsList().get(0).getTitle());
             holder.dailyTitle.setText(news.getTitle());
@@ -190,7 +190,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
 
     private void openUsingZhihuClient(Context context, String url) {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-        browserIntent.setPackage(Constants.Information.ZHIHU_PACKAGE_ID);
+        browserIntent.setPackage(Constants.PackageID.ZHIHU);
         context.startActivity(browserIntent);
     }
 
@@ -200,12 +200,18 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
         //noinspection deprecation
         share.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         share.putExtra(Intent.EXTRA_TEXT,
-                questionTitle + " " + questionUrl + Constants.Strings.SHARE_FROM_ZHIHU);
+                questionTitle + " " + questionUrl + SHARE_FROM_ZHIHU);
         context.startActivity(Intent.createChooser(share, context.getString(R.string.share_to)));
     }
 
     private String[] getQuestionTitlesAsStringArray(ZhihuDailyPurify.News news) {
-        return news.getQuestionsList().stream().map(ZhihuDailyPurify.Question::getTitle).toArray(String[]::new);
+        String[] result = new String[news.getQuestionsList().size()];
+
+        for (int i = 0; i < news.getQuestionsList().size(); i++) {
+            result[i] = news.getQuestionsList().get(i).getTitle();
+        }
+
+        return result;
     }
 
     public static class CardViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -261,4 +267,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
             }
         }
     }
+
+    private static final String SHARE_FROM_ZHIHU = " 分享自知乎网";
+    private static final String MULTIPLE_DISCUSSION = "这里包含多个知乎讨论，请点击后选择";
 }

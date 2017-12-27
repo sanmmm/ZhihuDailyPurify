@@ -1,16 +1,16 @@
-package io.github.izzyleung;
+package io.github.izzyleung.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class Network {
+public final class Network {
     private Network() {
 
     }
 
-    static InputStream openInputStream(String address) throws IOException {
+    public static InputStream openInputStream(String address) throws IOException {
         URL url = new URL(address);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");

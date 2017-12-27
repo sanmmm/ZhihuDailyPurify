@@ -12,6 +12,9 @@
         <item name="android:textAppearanceLargePopupMenu">
             @style/Theme.ZhihuDailyPurify.PopupMenuTextAppearanceLarge
         </item>
+        <item name="alertDialogTheme">
+            @style/Theme.ZhihuDailyPurify.AlertDialog
+        </item>
     </style>
 
     <style name="Theme.ZhihuDailyPurify.Prefs" parent="Theme.ZhihuDailyPurify.Light.NoActionBar">
@@ -20,5 +23,9 @@
 
     <style name="Theme.ZhihuDailyPurify.PopupMenuTextAppearanceLarge" parent="@style/TextAppearance.AppCompat.Light.Widget.PopupMenu.Large">
         <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <style name="Theme.ZhihuDailyPurify.AlertDialog" parent="Base.Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:textColorPrimary">@android:color/black</item>
     </style>
 </resources>

@@ -7,38 +7,35 @@ import com.squareup.timessquare.CalendarPickerView;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Optional;
 
 import io.github.izzyleung.zhihudailypurify.R;
 import io.github.izzyleung.zhihudailypurify.support.Constants;
+import io.github.izzyleung.zhihudailypurify.support.LocalDate;
 
 public class PickDateActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        layoutResID = R.layout.activity_pick_date;
-
         super.onCreate(savedInstanceState);
 
-        //noinspection ConstantConditions
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        Calendar nextDay = Calendar.getInstance();
-        nextDay.add(Calendar.DAY_OF_YEAR, 1);
+        Optional.ofNullable(getSupportActionBar())
+                .ifPresent(ab -> ab.setDisplayHomeAsUpEnabled(true));
 
         CalendarPickerView calendarPickerView = findViewById(R.id.calendar_view);
-        assert calendarPickerView != null;
-        calendarPickerView.init(Constants.Dates.birthday, nextDay.getTime())
+
+        Date start = LocalDate.of(2013, 5, 19).getTime();
+        Date end = LocalDate.now().plusDays(1).getTime();
+
+        calendarPickerView
+                .init(start, end)
                 .withSelectedDate(Calendar.getInstance().getTime());
+
         calendarPickerView.setOnDateSelectedListener(new CalendarPickerView.OnDateSelectedListener() {
             @Override
             public void onDateSelected(Date date) {
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(date);
-                calendar.add(Calendar.DAY_OF_YEAR, 1);
-
-                Intent intent = new Intent(PickDateActivity.this, SingleDayNewsActivity.class);
-                intent.putExtra(Constants.BundleKeys.DATE,
-                        Constants.Dates.simpleDateFormat.format(calendar.getTime()));
+                Intent intent = new Intent(PickDateActivity.this, FeedDetailActivity.class);
+                intent.putExtra(Constants.BundleKeys.DATE, LocalDate.of(date).plusDays(1).format());
                 startActivity(intent);
             }
 
@@ -47,6 +44,7 @@ public class PickDateActivity extends BaseActivity {
 
             }
         });
+
         calendarPickerView.setOnInvalidDateSelectedListener(date -> {
             if (date.after(new Date())) {
                 showSnackbar(R.string.not_coming);
@@ -54,5 +52,10 @@ public class PickDateActivity extends BaseActivity {
                 showSnackbar(R.string.not_born);
             }
         });
+    }
+
+    @Override
+    protected int layoutResId() {
+        return R.layout.activity_pick_date;
     }
 }

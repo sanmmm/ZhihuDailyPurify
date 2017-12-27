@@ -8,11 +8,9 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 
-import java.util.Optional;
-
 import io.github.izzyleung.ZhihuDailyPurify;
 
-public final class DailyNewsDataSource {
+public final class FeedDataSource {
     private SQLiteDatabase database;
     private DBHelper dbHelper;
     private String[] allColumns = {
@@ -21,7 +19,7 @@ public final class DailyNewsDataSource {
             DBHelper.COLUMN_FEED
     };
 
-    public DailyNewsDataSource(Context context) {
+    public FeedDataSource(Context context) {
         dbHelper = new DBHelper(context);
     }
 
@@ -44,15 +42,17 @@ public final class DailyNewsDataSource {
         database.update(DBHelper.TABLE_NAME, values, DBHelper.COLUMN_DATE + "=" + date, null);
     }
 
-    public void insertOrUpdateFeed(String date, ZhihuDailyPurify.Feed feed) {
-        if (feedForDate(date).isInitialized()) {
-            updateNewsList(date, feed);
-        } else {
+    void insertOrUpdateFeed(ZhihuDailyPurify.Feed feed) {
+        String date = feed.getNews(0).getDate();
+
+        if (feedForDate(date).equals(ZhihuDailyPurify.Feed.getDefaultInstance())) {
             insertFeed(date, feed);
+        } else {
+            updateNewsList(date, feed);
         }
     }
 
-    public ZhihuDailyPurify.Feed feedForDate(String date) {
+    ZhihuDailyPurify.Feed feedForDate(String date) {
         Cursor cursor = database.query(DBHelper.TABLE_NAME,
                 allColumns, DBHelper.COLUMN_DATE + " = " + date, null, null, null, null);
 
@@ -66,10 +66,11 @@ public final class DailyNewsDataSource {
     }
 
     private ZhihuDailyPurify.Feed cursorToFeed(Cursor cursor) {
-        return Optional.ofNullable(cursor)
-                .filter(c -> c.getCount() > 0)
-                .map(c -> feedFromByteArray(c.getBlob(2)))
-                .orElse(ZhihuDailyPurify.Feed.getDefaultInstance());
+        if (cursor != null && cursor.getCount() > 0) {
+            return feedFromByteArray(cursor.getBlob(2));
+        } else {
+            return ZhihuDailyPurify.Feed.getDefaultInstance();
+        }
     }
 
     private ZhihuDailyPurify.Feed feedFromByteArray(byte[] bytes) {

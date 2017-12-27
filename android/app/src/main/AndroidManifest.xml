@@ -4,7 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-sdk android:minSdkVersion="24"
+    <uses-sdk android:minSdkVersion="15"
           android:targetSdkVersion="27"/>
 
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -39,11 +39,11 @@
             android:label="@string/action_pick_date"/>
 
         <activity
-            android:name=".ui.activity.SingleDayNewsActivity"
+            android:name=".ui.activity.FeedDetailActivity"
             android:alwaysRetainTaskState="true"/>
 
         <activity
-            android:name=".ui.activity.PrefsActivity"
+            android:name=".ui.activity.PreferenceActivity"
             android:label="@string/action_settings"
             android:theme="@style/Theme.ZhihuDailyPurify.Prefs"/>
     </application>

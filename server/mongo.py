@@ -10,7 +10,6 @@ def has_date_cached(date):
 
 def feed_for_date(date):
     feed = Feed()
-
     feed.news.extend(_news_list_to_feed(_query_collection({'date': date})))
 
     return feed
@@ -24,7 +23,10 @@ def search(keyword):
         ]
     }
 
-    return _news_list_to_feed(_query_collection(criteria))
+    feed = Feed()
+    feed.news.extend(_news_list_to_feed(_query_collection(criteria)))
+
+    return feed
 
 
 def _news_list_to_feed(news_list):

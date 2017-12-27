@@ -1,27 +1,12 @@
 package io.github.izzyleung.zhihudailypurify.support;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 public final class Constants {
     private Constants() {
 
     }
 
-    public static final class Dates {
-        public static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd", Locale.US);
-        @SuppressWarnings("deprecation")
-        public static final Date birthday = new java.util.Date(113, 4, 19); // May 19th, 2013
-    }
-
-    public static final class Strings {
-        public static final String SHARE_FROM_ZHIHU = " 分享自知乎网";
-        public static final String MULTIPLE_DISCUSSION = "这里包含多个知乎讨论，请点击后选择";
-    }
-
-    public static final class Information {
-        public static final String ZHIHU_PACKAGE_ID = "com.zhihu.android";
+    public static final class PackageID {
+        public static final String ZHIHU = "com.zhihu.android";
     }
 
     public static final class SharedPreferencesKeys {

@@ -9,36 +9,35 @@ import android.view.MenuItem;
 
 import io.github.izzyleung.zhihudailypurify.R;
 
-public class BaseActivity extends AppCompatActivity {
-    private CoordinatorLayout mCoordinatorLayout;
-
-    protected Toolbar mToolBar;
-    protected int layoutResID = R.layout.activity_base;
+public abstract class BaseActivity extends AppCompatActivity {
+    protected CoordinatorLayout coordinatorLayout;
+    protected Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(layoutResID);
+        setContentView(layoutResId());
 
-        mToolBar = findViewById(R.id.toolbar);
-        setSupportActionBar(mToolBar);
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        mCoordinatorLayout = findViewById(R.id.coordinator_layout);
+        coordinatorLayout = findViewById(R.id.coordinator_layout);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            // Respond to the action bar's Up/Home button
-            case android.R.id.home:
-                onBackPressed();
-                return true;
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 
     public void showSnackbar(int resId) {
-        Snackbar.make(mCoordinatorLayout, resId, Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(coordinatorLayout, resId, Snackbar.LENGTH_SHORT).show();
     }
+
+    protected abstract int layoutResId();
 }

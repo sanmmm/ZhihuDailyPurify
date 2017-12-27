@@ -2,24 +2,33 @@ package io.github.izzyleung.zhihudailypurify.ui.activity;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.view.MenuItem;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.widget.RelativeLayout;
 
-import java.io.IOException;
+import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
+import com.eowise.recyclerview.stickyheaders.StickyHeadersItemDecoration;
+
+import java.util.Optional;
 
 import io.github.izzyleung.MySearchView;
 import io.github.izzyleung.ZhihuDailyPurify;
 import io.github.izzyleung.ZhihuDailyPurifyServer;
 import io.github.izzyleung.zhihudailypurify.R;
-import io.github.izzyleung.zhihudailypurify.ui.fragment.SearchFragment;
+import io.github.izzyleung.zhihudailypurify.ui.adapter.DateHeaderAdapter;
+import io.github.izzyleung.zhihudailypurify.ui.adapter.NewsAdapter;
+import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class SearchActivity extends BaseActivity implements SingleObserver<ZhihuDailyPurify.Feed> {
+    private ZhihuDailyPurify.Feed feed = ZhihuDailyPurify.Feed.getDefaultInstance();
+
     private MySearchView searchView;
-    private SearchFragment searchFragment;
+    private NewsAdapter adapter;
+    private DateHeaderAdapter headerAdapter;
 
     @SuppressWarnings("deprecation")
     private ProgressDialog dialog;
@@ -30,30 +39,11 @@ public class SearchActivity extends BaseActivity implements SingleObserver<Zhihu
 
         initView();
         initDialog();
-
-        searchFragment = new SearchFragment();
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(R.id.fragment_frame, searchFragment)
-                .commit();
     }
 
     @Override
-    public void onDestroy() {
-        searchFragment = null;
-
-        super.onDestroy();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+    protected int layoutResId() {
+        return R.layout.activity_search;
     }
 
     private void initView() {
@@ -62,25 +52,39 @@ public class SearchActivity extends BaseActivity implements SingleObserver<Zhihu
         searchView.setOnQueryTextListener(query -> {
             dialog.show();
             searchView.clearFocus();
-            try {
-                ZhihuDailyPurifyServer.searchForKeyword(query)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(this);
-            } catch (IOException e) {
-                onError(e);
-            }
+            Single.defer(() -> ZhihuDailyPurifyServer.searchForKeyword(query))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(this);
             return true;
         });
 
         RelativeLayout relative = new RelativeLayout(this);
         relative.addView(searchView);
 
-        mToolBar.addView(relative);
+        toolbar.addView(relative);
 
-        setSupportActionBar(mToolBar);
-        //noinspection ConstantConditions
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setSupportActionBar(toolbar);
+        Optional.ofNullable(getSupportActionBar())
+                .ifPresent(ab -> ab.setDisplayHomeAsUpEnabled(true));
+
+        RecyclerView recyclerView = findViewById(R.id.search_result_list);
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(llm);
+        adapter = new NewsAdapter(feed);
+        headerAdapter = new DateHeaderAdapter(feed);
+
+        StickyHeadersItemDecoration header = new StickyHeadersBuilder()
+                .setAdapter(adapter)
+                .setRecyclerView(recyclerView)
+                .setStickyHeadersAdapter(headerAdapter)
+                .build();
+
+        recyclerView.setAdapter(adapter);
+        recyclerView.addItemDecoration(header);
     }
 
     private void initDialog() {
@@ -98,7 +102,8 @@ public class SearchActivity extends BaseActivity implements SingleObserver<Zhihu
     @Override
     public void onSuccess(ZhihuDailyPurify.Feed feed) {
         dialog.dismiss();
-        searchFragment.updateContent(feed);
+        adapter.updateFeed(feed);
+        headerAdapter.setFeed(feed);
     }
 
     @Override

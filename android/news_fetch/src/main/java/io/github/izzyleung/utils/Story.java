@@ -1,6 +1,6 @@
-package io.github.izzyleung;
+package io.github.izzyleung.utils;
 
-public class Story {
+public final class Story {
     private int id;
     private String title;
     private String thumbnailUrl;
@@ -9,45 +9,45 @@ public class Story {
 
     }
 
-    int getId() {
+    public int getId() {
         return id;
     }
 
-    String getTitle() {
+    public String getTitle() {
         return title;
     }
 
-    String getThumbnailUrl() {
+    public String getThumbnailUrl() {
         return thumbnailUrl;
     }
 
-    static Builder newBuilder() {
+    public static Builder newBuilder() {
         return new Builder();
     }
 
-    static class Builder {
-        private Story instance;
+    public final static class Builder {
+        private final Story instance;
 
-        Builder() {
+        private Builder() {
             instance = new Story();
         }
 
-        Builder setId(int id) {
+        public Builder setId(final int id) {
             instance.id = id;
             return this;
         }
 
-        Builder setTitle(String title) {
+        public Builder setTitle(final String title) {
             instance.title = title;
             return this;
         }
 
-        Builder setThumbnailUrl(String thumbnailUrl) {
+        public Builder setThumbnailUrl(final String thumbnailUrl) {
             instance.thumbnailUrl = thumbnailUrl;
             return this;
         }
 
-        Story build() {
+        public Story build() {
             return instance;
         }
     }

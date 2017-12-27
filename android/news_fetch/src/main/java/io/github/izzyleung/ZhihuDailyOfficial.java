@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import io.github.izzyleung.utils.Network;
+import io.github.izzyleung.utils.Story;
+import io.github.izzyleung.utils.Tuple;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
 
@@ -41,28 +44,28 @@ public class ZhihuDailyOfficial {
     }
 
     private static Flowable<Story> convertToStory(JSONObject j) throws JSONException {
-        Single<Integer> idFlowable = Single.just(j.getInt("id"));
-        Single<String> titleFlowable = Single.just(j.getString("title"));
-        Single<String> thumbnailUrlFlowable =
-                Single.just(j)
-                        .filter(x -> x.has("images"))
-                        .map(x -> x.getJSONArray("images"))
-                        .map(x -> (String) x.get(0))
-                        .switchIfEmpty(Single.just(""));
+        Flowable<Integer> idFlowable = Flowable.just(j.getInt("id"));
+        Flowable<String> titleFlowable = Flowable.just(j.getString("title"));
+        Flowable<String> thumbnailUrlFlowable = Flowable.just(j)
+                .filter(x -> x.has("images"))
+                .map(x -> x.getJSONArray("images"))
+                .map(x -> (String) x.get(0))
+                .switchIfEmpty(Flowable.just(""));
 
-        return Single.zip(idFlowable, titleFlowable, thumbnailUrlFlowable, (id, title, thumbnailUrl) ->
+        return Flowable.zip(idFlowable, titleFlowable, thumbnailUrlFlowable, (id, title, thumbnailUrl) ->
                 Story.newBuilder()
                         .setId(id)
                         .setTitle(title)
                         .setThumbnailUrl(thumbnailUrl)
                         .build()
-        ).toFlowable();
+        );
     }
 
-    public static Flowable<Document> documents(InputStream in) throws JSONException {
+    public static Flowable<Optional<Document>> documents(InputStream in) throws JSONException {
         return Flowable.just(new JSONObject(mkString(in)))
                 .filter(j -> j.has("body"))
-                .map(j -> Jsoup.parse(j.getString("body")));
+                .map(j -> Optional.of(Jsoup.parse(j.getString("body"))))
+                .switchIfEmpty(Flowable.just(Optional.empty()));
     }
 
     public static Flowable<Story> stories(InputStream in) {
@@ -73,32 +76,34 @@ public class ZhihuDailyOfficial {
                 .flatMap(ZhihuDailyOfficial::convertToStory);
     }
 
-    private static Optional<ZhihuDailyPurify.News> convertToNews(Pair<Story, Document> pair, String date) {
-        return Optional.of(getQuestions(pair))
+    private static Flowable<ZhihuDailyPurify.News> convertToNews(Tuple<String, Story, Optional<Document>> triple) {
+        return getQuestions(triple)
+                .filter(ZhihuDailyOfficial::isValidZhihuQuestion)
+                .toList()
                 .filter(qs -> qs.size() > 0)
-                .map(qs ->
-                        ZhihuDailyPurify.News
-                                .newBuilder()
-                                .setDate(date)
-                                .setTitle(pair.first.getTitle())
-                                .setThumbnailUrl(pair.first.getThumbnailUrl())
-                                .addAllQuestions(qs)
-                                .build());
+                .map(qs -> ZhihuDailyPurify.News
+                        .newBuilder()
+                        .setDate(triple.getLeft())
+                        .setTitle(triple.getMiddle().getTitle())
+                        .setThumbnailUrl(triple.getMiddle().getThumbnailUrl())
+                        .addAllQuestions(qs)
+                        .build())
+                .toFlowable();
     }
 
-    private static List<ZhihuDailyPurify.Question> getQuestions(Pair<Story, Document> pair) {
-        String dailyTitle = pair.first.getTitle();
-        Document document = pair.second;
+    private static Flowable<ZhihuDailyPurify.Question> getQuestions(Tuple<String, Story, Optional<Document>> triple) {
+        String dailyTitle = triple.getMiddle().getTitle();
+        //noinspection ConstantConditions
+        Document document = triple.getRight().get();
 
-        return getQuestionElements(document).stream()
+        return Flowable.fromIterable(getQuestionElements(document))
                 .map(questionElement ->
                         ZhihuDailyPurify.Question
                                 .newBuilder()
                                 .setTitle(obtainQuestionTitle(questionElement).orElse(dailyTitle))
                                 .setUrl(obtainQuestionUrl(questionElement).orElse(""))
                                 .build())
-                .filter(ZhihuDailyOfficial::isValidZhihuQuestion)
-                .collect(Collectors.toList());
+                .filter(ZhihuDailyOfficial::isValidZhihuQuestion);
     }
 
     private static Elements getQuestionElements(Document document) {
@@ -125,30 +130,32 @@ public class ZhihuDailyOfficial {
                 .orElse(false);
     }
 
-    @SuppressWarnings("CheckReturnValue")
     public static Single<ZhihuDailyPurify.Feed> feedForDate(String date) throws IOException {
-        Flowable<Story> stories = stories(Network.openInputStream(Url.ZHIHU_DAILY_NEWS_BEFORE + date));
-        Flowable<Document> documents =
-                stories
-                        .map(s -> Network.openInputStream(Url.ZHIHU_DAILY_NEWS_BASE + s.getId()))
-                        .flatMap(ZhihuDailyOfficial::documents);
+        Flowable<Story> stories = stories(ZhihuDaily.storiesForDate(date));
+        Flowable<Optional<Document>> documents = stories.map(ZhihuDaily::storyDetail).flatMap(ZhihuDailyOfficial::documents);
+        Flowable<String> dates = stories.map(s -> date);
 
-        ZhihuDailyPurify.Feed.Builder builder = ZhihuDailyPurify.Feed.newBuilder();
+        Single<ZhihuDailyPurify.Feed.Builder> builder = Single.just(ZhihuDailyPurify.Feed.newBuilder());
+        Single<List<ZhihuDailyPurify.News>> news = Flowable
+                .zip(dates, stories, documents, Tuple::new)
+                .filter(tuple -> tuple.getRight().isPresent())
+                .flatMap(ZhihuDailyOfficial::convertToNews)
+                .toList();
 
-        Flowable
-                .zip(stories, documents, Pair::new)
-                .filter(pair -> pair.second != null)
-                .map(pair -> convertToNews(pair, date))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .forEach(builder::addNews);
-
-        return Single.just(builder.build());
+        return Single.zip(builder, news, (b, n) -> b.addAllNews(n).build());
     }
 
-    private static class Url {
+    private static class ZhihuDaily {
         private static final String ZHIHU_DAILY_NEWS_BASE = "https://news-at.zhihu.com/api/4/news/";
         private static final String ZHIHU_DAILY_NEWS_BEFORE = ZHIHU_DAILY_NEWS_BASE + "before/";
+
+        private static InputStream storiesForDate(String date) throws IOException {
+            return Network.openInputStream(ZHIHU_DAILY_NEWS_BEFORE + date);
+        }
+
+        private static InputStream storyDetail(Story story) throws IOException {
+            return Network.openInputStream(ZHIHU_DAILY_NEWS_BASE + story.getId());
+        }
     }
 
     private static class Selectors {

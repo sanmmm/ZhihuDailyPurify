@@ -202,14 +202,6 @@ def generate_maven_dependencies():
         artifact = "com.eowise:recyclerview-stickyheaders:0.5.2",
     )
 
-    maven_aar(
-        name = "rxandroid",
-        artifact = "io.reactivex.rxjava2:rxandroid:2.0.1",
-        deps = [
-            "@rxjava//jar",
-        ]
-    )
-
     maven_jar(
         name = "reactive_stream",
         artifact = "org.reactivestreams:reactive-streams:1.0.2",
@@ -221,6 +213,14 @@ def generate_maven_dependencies():
         deps = [
             "@reactive_stream//jar"
         ],
+    )
+
+    maven_aar(
+        name = "rxandroid",
+        artifact = "io.reactivex.rxjava2:rxandroid:2.0.1",
+        deps = [
+            "@rxjava//jar",
+        ]
     )
 
     maven_jar(

@@ -10,11 +10,11 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 
-import io.github.izzyleung.zhihudailypurify.db.DailyNewsDataSource;
+import io.github.izzyleung.zhihudailypurify.db.FeedDataSource;
 
 public final class ZhihuDailyPurifyApplication extends Application {
     private static ZhihuDailyPurifyApplication applicationContext;
-    private static DailyNewsDataSource dataSource;
+    private static FeedDataSource dataSource;
 
     public static void initImageLoader(Context context) {
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
@@ -30,7 +30,7 @@ public final class ZhihuDailyPurifyApplication extends Application {
         return applicationContext;
     }
 
-    public static DailyNewsDataSource getDataSource() {
+    public static FeedDataSource getDataSource() {
         return dataSource;
     }
 
@@ -40,7 +40,8 @@ public final class ZhihuDailyPurifyApplication extends Application {
         applicationContext = this;
 
         initImageLoader(getApplicationContext());
-        dataSource = new DailyNewsDataSource(getApplicationContext());
+
+        dataSource = new FeedDataSource(getApplicationContext());
         dataSource.open();
     }
 
