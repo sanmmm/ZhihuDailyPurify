@@ -1,6 +1,6 @@
 load("@bazel_tools//tools/build_defs/repo:maven_rules.bzl", "maven_aar", "maven_jar")
 
-def generate_maven_dependencies(android_build_tools_version):
+def generate_android_support_libs_dependency(android_build_tools_version):
     maven_aar(
         name = "support_v4",
         settings = "//third_party:google_maven.xml",
@@ -176,24 +176,16 @@ def generate_maven_dependencies(android_build_tools_version):
         ],
     )
 
+
+def generate_java_dependencies():
+    maven_jar(
+        name = "json",
+        artifact = "org.json:json:20171018",
+    )
+
     maven_jar(
         name = "jsoup",
         artifact = "org.jsoup:jsoup:1.7.3",
-    )
-
-    maven_aar(
-        name = "universal_image_loader",
-        artifact = "com.nostra13.universalimageloader:universal-image-loader:1.9.5",
-    )
-
-    maven_aar(
-        name = "android_times_square",
-        artifact = "com.squareup:android-times-square:1.6.4",
-    )
-
-    maven_aar(
-        name = "recyclerview_stickyheaders",
-        artifact = "com.eowise:recyclerview-stickyheaders:0.5.2",
     )
 
     maven_jar(
@@ -209,17 +201,30 @@ def generate_maven_dependencies(android_build_tools_version):
         ],
     )
 
+
+def generate_other_android_dependencies():
+    maven_aar(
+        name = "universal_image_loader",
+        artifact = "com.nostra13.universalimageloader:universal-image-loader:1.9.5",
+    )
+
+    maven_aar(
+        name = "android_times_square",
+        artifact = "com.squareup:android-times-square:1.6.4",
+    )
+
+    maven_aar(
+        name = "recyclerview_stickyheaders",
+        artifact = "com.eowise:recyclerview-stickyheaders:0.5.2",
+    )
+
+
     maven_aar(
         name = "rxandroid",
         artifact = "io.reactivex.rxjava2:rxandroid:2.0.1",
         deps = [
             "@rxjava//jar",
         ]
-    )
-
-    maven_jar(
-        name = "json",
-        artifact = "org.json:json:20171018",
     )
 
 def setup_android_app_dependencies():

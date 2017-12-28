@@ -10,13 +10,18 @@ android_sdk_repository(
 )
 
 load("//third_party:gen_deps.bzl", 
-        "generate_maven_dependencies", 
+        "generate_android_support_libs_dependency",
+        "generate_java_dependencies",
+        "generate_other_android_dependencies",
         "setup_protobuf",
         "setup_rules_bazel",
         "setup_rules_docker"
 )
 
-generate_maven_dependencies(BUILD_TOOLS_VERSION)
+generate_android_support_libs_dependency(BUILD_TOOLS_VERSION)
+generate_java_dependencies()
+generate_other_android_dependencies()
+
 setup_protobuf()
 setup_rules_bazel()
 setup_rules_docker()
