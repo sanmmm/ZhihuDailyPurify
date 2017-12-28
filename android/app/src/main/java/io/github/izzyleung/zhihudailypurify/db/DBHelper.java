@@ -5,13 +5,15 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public final class DBHelper extends SQLiteOpenHelper {
-    public static final String TABLE_NAME = "feed";
-    public static final String COLUMN_ID = "_id";
-    public static final String COLUMN_DATE = "date";
-    public static final String COLUMN_FEED = "feed";
+    static final String TABLE_NAME = "feed";
+    static final String COLUMN_ID = "_id";
+    static final String COLUMN_DATE = "date";
+    static final String COLUMN_FEED = "feed";
 
-    public static final String DATABASE_NAME = "feed.db";
-    public static final int DATABASE_VERSION = 1;
+    static final int COLUMN_INDEX_FEED = 2;
+
+    private static final String DATABASE_NAME = "feed.db";
+    private static final int DATABASE_VERSION = 1;
 
     private static final String DATABASE_CREATE
             = "CREATE TABLE " + TABLE_NAME
@@ -19,7 +21,7 @@ public final class DBHelper extends SQLiteOpenHelper {
             + COLUMN_DATE + " CHAR(8) UNIQUE, "
             + COLUMN_FEED + " BLOB NOT NULL);";
 
-    public DBHelper(Context context) {
+    DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 

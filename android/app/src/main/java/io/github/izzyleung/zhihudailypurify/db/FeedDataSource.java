@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 
+import java.util.Optional;
+
 import io.github.izzyleung.ZhihuDailyPurify;
 
 public final class FeedDataSource {
@@ -43,41 +45,44 @@ public final class FeedDataSource {
     }
 
     void insertOrUpdateFeed(ZhihuDailyPurify.Feed feed) {
-        String date = feed.getNews(0).getDate();
+        if (feed.equals(ZhihuDailyPurify.Feed.getDefaultInstance()) || feed.getNewsCount() == 0) {
+            return;
+        }
 
-        if (feedForDate(date).equals(ZhihuDailyPurify.Feed.getDefaultInstance())) {
+        String date = feed.getNews(0).getDate();
+        Optional<ZhihuDailyPurify.Feed> fromDB = feedForDate(date);
+
+        if (!fromDB.isPresent()) {
             insertFeed(date, feed);
-        } else {
+        } else if (!fromDB.get().equals(feed)) {
             updateNewsList(date, feed);
         }
     }
 
-    ZhihuDailyPurify.Feed feedForDate(String date) {
+    Optional<ZhihuDailyPurify.Feed> feedForDate(String date) {
         Cursor cursor = database.query(DBHelper.TABLE_NAME,
                 allColumns, DBHelper.COLUMN_DATE + " = " + date, null, null, null, null);
 
         cursor.moveToFirst();
 
-        ZhihuDailyPurify.Feed result = cursorToFeed(cursor);
+        Optional<ZhihuDailyPurify.Feed> result = cursorToFeed(cursor);
 
         cursor.close();
 
         return result;
     }
 
-    private ZhihuDailyPurify.Feed cursorToFeed(Cursor cursor) {
-        if (cursor != null && cursor.getCount() > 0) {
-            return feedFromByteArray(cursor.getBlob(2));
-        } else {
-            return ZhihuDailyPurify.Feed.getDefaultInstance();
-        }
+    private Optional<ZhihuDailyPurify.Feed> cursorToFeed(Cursor cursor) {
+        return Optional.ofNullable(cursor)
+                .filter(c -> c.getCount() > 0)
+                .flatMap(c -> feedFromByteArray(c.getBlob(DBHelper.COLUMN_INDEX_FEED)));
     }
 
-    private ZhihuDailyPurify.Feed feedFromByteArray(byte[] bytes) {
+    private Optional<ZhihuDailyPurify.Feed> feedFromByteArray(byte[] bytes) {
         try {
-            return ZhihuDailyPurify.Feed.parseFrom(bytes);
+            return Optional.of(ZhihuDailyPurify.Feed.parseFrom(bytes));
         } catch (InvalidProtocolBufferException e) {
-            return ZhihuDailyPurify.Feed.getDefaultInstance();
+            return Optional.empty();
         }
     }
 }

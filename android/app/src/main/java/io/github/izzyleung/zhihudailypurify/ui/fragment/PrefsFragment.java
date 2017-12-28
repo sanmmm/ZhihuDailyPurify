@@ -27,13 +27,13 @@ public class PrefsFragment extends PreferenceFragment
         addPreferencesFromResource(R.xml.prefs);
         findPreference("about").setOnPreferenceClickListener(this);
 
-        if (!Check.isZhihuClientInstalled()) {
+        if (!Check.isZhihuInstalled()) {
             ((PreferenceCategory) findPreference("settings_settings"))
                     .removePreference(findPreference("using_client?"));
         }
 
         if (!ZhihuDailyPurifyApplication.getSharedPreferences()
-                .getBoolean(Constants.SharedPreferencesKeys.KEY_SHOULD_ENABLE_ACCELERATE_SERVER, false)) {
+                .getBoolean(Constants.SharedPreferencesKeys.SHOULD_ENABLE_ACCELERATE_SERVER, false)) {
             ((PreferenceScreen) findPreference("preference_screen"))
                     .removePreference(findPreference("settings_network_settings"));
         }
@@ -80,7 +80,7 @@ public class PrefsFragment extends PreferenceFragment
                     Toast.LENGTH_SHORT).show();
             PreferenceManager.getDefaultSharedPreferences(getActivity())
                     .edit()
-                    .putBoolean(Constants.SharedPreferencesKeys.KEY_SHOULD_ENABLE_ACCELERATE_SERVER, true)
+                    .putBoolean(Constants.SharedPreferencesKeys.SHOULD_ENABLE_ACCELERATE_SERVER, true)
                     .apply();
             return true;
         });

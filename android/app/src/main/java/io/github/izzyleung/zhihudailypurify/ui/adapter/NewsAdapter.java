@@ -3,6 +3,7 @@ package io.github.izzyleung.zhihudailypurify.ui.adapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
@@ -33,7 +34,7 @@ import io.github.izzyleung.zhihudailypurify.support.Check;
 import io.github.izzyleung.zhihudailypurify.support.Constants;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder> {
-    private ZhihuDailyPurify.Feed feed;
+    private ZhihuDailyPurify.Feed feed = ZhihuDailyPurify.Feed.getDefaultInstance();
 
     private ImageLoader imageLoader = ImageLoader.getInstance();
     private DisplayImageOptions options = new DisplayImageOptions.Builder()
@@ -46,15 +47,15 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
             .build();
     private ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
 
-    public NewsAdapter(ZhihuDailyPurify.Feed feed) {
-        this.feed = feed;
-
+    public NewsAdapter() {
         setHasStableIds(true);
     }
 
     public void updateFeed(ZhihuDailyPurify.Feed feed) {
-        this.feed = feed;
-        notifyDataSetChanged();
+        if (!feed.equals(ZhihuDailyPurify.Feed.getDefaultInstance()) && !this.feed.equals(feed)) {
+            this.feed = feed;
+            notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -76,14 +77,15 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
                 PopupMenu popup = new PopupMenu(context, v);
                 MenuInflater inflater = popup.getMenuInflater();
                 inflater.inflate(R.menu.contextual_news_list, popup.getMenu());
-                popup.setOnMenuItemClickListener(item -> {
 
+                popup.setOnMenuItemClickListener(item -> {
                     if (item.getItemId() == R.id.action_share_url) {
                         share(context, position);
                     }
 
                     return true;
                 });
+
                 popup.show();
             }
         });
@@ -91,7 +93,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
 
     @Override
     public void onBindViewHolder(CardViewHolder holder, int position) {
-        ZhihuDailyPurify.News news = feed.getNewsList().get(position);
+        ZhihuDailyPurify.News news = feed.getNews(position);
         imageLoader.displayImage(news.getThumbnailUrl(), holder.newsImage, options, animateFirstListener);
 
         if (news.getQuestionsList().size() > 1) {
@@ -105,20 +107,19 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
 
     @Override
     public int getItemCount() {
-        return feed.getNewsList().size();
+        return feed.getNewsCount();
     }
 
     @Override
     public long getItemId(int position) {
-        return feed.getNewsList().get(position).hashCode();
+        return feed.getNews(position).hashCode();
     }
 
     private void browse(Context context, int position) {
-        ZhihuDailyPurify.News news = feed.getNewsList().get(position);
+        ZhihuDailyPurify.News news = feed.getNews(position);
 
         if (news.getQuestionsList().size() > 1) {
-            AlertDialog dialog = createDialog(context,
-                    news,
+            AlertDialog dialog = createDialog(context, news,
                     makeGoToZhihuDialogClickListener(context, news));
             dialog.show();
         } else {
@@ -127,11 +128,10 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
     }
 
     private void share(Context context, int position) {
-        ZhihuDailyPurify.News news = feed.getNewsList().get(position);
+        ZhihuDailyPurify.News news = feed.getNews(position);
 
         if (news.getQuestionsList().size() > 1) {
-            AlertDialog dialog = createDialog(context,
-                    news,
+            AlertDialog dialog = createDialog(context, news,
                     makeShareQuestionDialogClickListener(context, news));
             dialog.show();
         } else {
@@ -168,10 +168,11 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
     }
 
     private void goToZhihu(Context context, String url) {
-        if (!ZhihuDailyPurifyApplication.getSharedPreferences()
-                .getBoolean(Constants.SharedPreferencesKeys.KEY_SHOULD_USE_CLIENT, false)) {
+        SharedPreferences preferences = ZhihuDailyPurifyApplication.getSharedPreferences();
+
+        if (!preferences.getBoolean(Constants.SharedPreferencesKeys.SHOULD_USE_CLIENT, false)) {
             openUsingBrowser(context, url);
-        } else if (Check.isZhihuClientInstalled()) {
+        } else if (Check.isZhihuInstalled()) {
             openUsingZhihuClient(context, url);
         } else {
             openUsingBrowser(context, url);

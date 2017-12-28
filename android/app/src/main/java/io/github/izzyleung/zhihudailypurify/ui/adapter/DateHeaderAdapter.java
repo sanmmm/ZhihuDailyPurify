@@ -17,14 +17,10 @@ import io.github.izzyleung.zhihudailypurify.R;
 import io.github.izzyleung.zhihudailypurify.support.LocalDate;
 
 public class DateHeaderAdapter implements StickyHeadersAdapter<DateHeaderAdapter.HeaderViewHolder> {
-    private ZhihuDailyPurify.Feed feed;
+    private ZhihuDailyPurify.Feed feed = ZhihuDailyPurify.Feed.getDefaultInstance();
     private DateFormat dateFormat = DateFormat.getDateInstance();
 
-    public DateHeaderAdapter(ZhihuDailyPurify.Feed feed) {
-        this.feed = feed;
-    }
-
-    public void setFeed(ZhihuDailyPurify.Feed feed) {
+    public void updateFeed(ZhihuDailyPurify.Feed feed) {
         this.feed = feed;
     }
 
@@ -39,7 +35,7 @@ public class DateHeaderAdapter implements StickyHeadersAdapter<DateHeaderAdapter
 
     @Override
     public void onBindViewHolder(HeaderViewHolder viewHolder, int position) {
-        String dateFromNews = feed.getNewsList().get(position).getDate();
+        String dateFromNews = feed.getNews(position).getDate();
         Date date = LocalDate.of(dateFromNews).plusDays(-1).getTime();
 
         viewHolder.title.setText(dateFormat.format(date));
@@ -47,7 +43,7 @@ public class DateHeaderAdapter implements StickyHeadersAdapter<DateHeaderAdapter
 
     @Override
     public long getHeaderId(int position) {
-        return feed.getNewsList().get(position).getDate().hashCode();
+        return feed.getNews(position).getDate().hashCode();
     }
 
     static class HeaderViewHolder extends RecyclerView.ViewHolder {

@@ -5,6 +5,8 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import java.util.Optional;
+
 import io.github.izzyleung.ZhihuDailyOfficial;
 import io.github.izzyleung.ZhihuDailyPurify;
 import io.github.izzyleung.ZhihuDailyPurifyServer;
@@ -23,8 +25,6 @@ import io.reactivex.schedulers.Schedulers;
 
 public class BasicFeedActivity extends BaseActivity
         implements SwipeRefreshLayout.OnRefreshListener, SingleObserver<ZhihuDailyPurify.Feed> {
-    private ZhihuDailyPurify.Feed feed = ZhihuDailyPurify.Feed.getDefaultInstance();
-
     protected String date = LocalDate.now().plusDays(1).format();
     private boolean isToday = true;
     private boolean hasRefreshed = false;
@@ -40,14 +40,12 @@ public class BasicFeedActivity extends BaseActivity
 
         initView();
 
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
-            String datePassedIn = bundle.getString(Constants.BundleKeys.DATE);
-            if (datePassedIn != null) {
-                date = datePassedIn;
-                isToday = LocalDate.isToday(date);
-            }
-        }
+        Optional.ofNullable(getIntent().getExtras())
+                .map(bundle -> bundle.getString(Constants.BundleKeys.DATE))
+                .ifPresent(d -> {
+                    date = d;
+                    isToday = LocalDate.isToday(date);
+                });
     }
 
     @Override
@@ -85,21 +83,12 @@ public class BasicFeedActivity extends BaseActivity
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(llm);
 
-        adapter = new NewsAdapter(feed);
+        adapter = new NewsAdapter();
         mRecyclerView.setAdapter(adapter);
 
         swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.setColorSchemeResources(R.color.color_primary);
-    }
-
-    private void updateFeed(ZhihuDailyPurify.Feed feed) {
-        if (!feed.equals(this.feed)) {
-            this.feed = feed;
-            adapter.updateFeed(feed);
-
-            new SaveToDBTask(feed).execute();
-        }
     }
 
     private void refresh() {
@@ -113,12 +102,12 @@ public class BasicFeedActivity extends BaseActivity
 
     private boolean shouldUseAccelerateServer() {
         return ZhihuDailyPurifyApplication.getSharedPreferences()
-                .getBoolean(Constants.SharedPreferencesKeys.KEY_SHOULD_USE_ACCELERATE_SERVER, false);
+                .getBoolean(Constants.SharedPreferencesKeys.SHOULD_USE_ACCELERATE_SERVER, false);
     }
 
     private boolean shouldAutoRefresh() {
         return ZhihuDailyPurifyApplication.getSharedPreferences()
-                .getBoolean(Constants.SharedPreferencesKeys.KEY_SHOULD_AUTO_REFRESH, true);
+                .getBoolean(Constants.SharedPreferencesKeys.SHOULD_AUTO_REFRESH, true);
     }
 
     private Single<ZhihuDailyPurify.Feed> feedSource() {
@@ -150,9 +139,11 @@ public class BasicFeedActivity extends BaseActivity
     @Override
     public void onSuccess(ZhihuDailyPurify.Feed feed) {
         hasRefreshed = true;
-        swipeRefreshLayout.setRefreshing(false);
 
-        updateFeed(feed);
+        swipeRefreshLayout.setRefreshing(false);
+        adapter.updateFeed(feed);
+
+        new SaveToDBTask(feed).execute();
     }
 
     @Override

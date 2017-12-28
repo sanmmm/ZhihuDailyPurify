@@ -24,8 +24,6 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class SearchActivity extends BaseActivity implements SingleObserver<ZhihuDailyPurify.Feed> {
-    private ZhihuDailyPurify.Feed feed = ZhihuDailyPurify.Feed.getDefaultInstance();
-
     private MySearchView searchView;
     private NewsAdapter adapter;
     private DateHeaderAdapter headerAdapter;
@@ -74,8 +72,8 @@ public class SearchActivity extends BaseActivity implements SingleObserver<Zhihu
 
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
-        adapter = new NewsAdapter(feed);
-        headerAdapter = new DateHeaderAdapter(feed);
+        adapter = new NewsAdapter();
+        headerAdapter = new DateHeaderAdapter();
 
         StickyHeadersItemDecoration header = new StickyHeadersBuilder()
                 .setAdapter(adapter)
@@ -103,7 +101,7 @@ public class SearchActivity extends BaseActivity implements SingleObserver<Zhihu
     public void onSuccess(ZhihuDailyPurify.Feed feed) {
         dialog.dismiss();
         adapter.updateFeed(feed);
-        headerAdapter.setFeed(feed);
+        headerAdapter.updateFeed(feed);
     }
 
     @Override
