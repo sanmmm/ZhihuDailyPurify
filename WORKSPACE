@@ -1,9 +1,12 @@
 workspace(name = "ZhihuDailyPurify")
 
+API_LEVEL = 27
+BUILD_TOOLS_VERSION = "27.0.2"
+
 android_sdk_repository(
     name = "androidsdk",
-    api_level = 27,
-    build_tools_version = "27.0.2"
+    api_level = API_LEVEL,
+    build_tools_version = BUILD_TOOLS_VERSION,
 )
 
 load("//third_party:gen_deps.bzl", 
@@ -13,7 +16,7 @@ load("//third_party:gen_deps.bzl",
         "setup_rules_docker"
 )
 
-generate_maven_dependencies()
+generate_maven_dependencies(BUILD_TOOLS_VERSION)
 setup_protobuf()
 setup_rules_bazel()
 setup_rules_docker()
@@ -36,11 +39,3 @@ load(
 )
 
 _py_image_repos()
-
-load(
-    "@io_bazel_rules_docker//container:container.bzl",
-    "container_pull",
-    container_repositories = "repositories",
-)
-
-container_repositories()

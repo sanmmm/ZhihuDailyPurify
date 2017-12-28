@@ -1,10 +1,10 @@
 load("@bazel_tools//tools/build_defs/repo:maven_rules.bzl", "maven_aar", "maven_jar")
 
-def generate_maven_dependencies():
+def generate_maven_dependencies(android_build_tools_version):
     maven_aar(
         name = "support_v4",
         settings = "//third_party:google_maven.xml",
-        artifact = "com.android.support:support-v4:27.0.2",
+        artifact = "com.android.support:support-v4:{}".format(android_build_tools_version),
         deps = [
             "@support_compat//aar",
             "@support_media_compat//aar",
@@ -17,9 +17,9 @@ def generate_maven_dependencies():
     maven_aar(
         name = "support_appcompat_v7",
         settings = "//third_party:google_maven.xml",
-        artifact = "com.android.support:appcompat-v7:27.0.2",
+        artifact = "com.android.support:appcompat-v7:{}".format(android_build_tools_version),
         deps = [
-            "@support_annotations_27_0_2//jar",
+            "@support_annotations//jar",
             "@support_core_utils//aar",
             "@support_fragment//aar",
             "@support_vector_drawable//aar",
@@ -30,18 +30,18 @@ def generate_maven_dependencies():
     maven_aar(
         name = "support_cardview_v7",
         settings = "//third_party:google_maven.xml",
-        artifact = "com.android.support:cardview-v7:27.0.2",
+        artifact = "com.android.support:cardview-v7:{}".format(android_build_tools_version),
         deps = [
-            "@support_annotations_27_0_2//jar",
+            "@support_annotations//jar",
         ],
     )
 
     maven_aar(
         name = "support_recyclerview_v7",
         settings = "//third_party:google_maven.xml",
-        artifact = "com.android.support:recyclerview-v7:27.0.2",
+        artifact = "com.android.support:recyclerview-v7:{}".format(android_build_tools_version),
         deps = [
-            "@support_annotations_27_0_2//jar",
+            "@support_annotations//jar",
             "@support_compat//aar",
             "@support_core_ui//aar",
         ],
@@ -50,7 +50,7 @@ def generate_maven_dependencies():
     maven_aar(
         name = "support_design",
         settings = "//third_party:google_maven.xml",
-        artifact = "com.android.support:design:27.0.2",
+        artifact = "com.android.support:design:{}".format(android_build_tools_version),
         deps = [
             "@support_v4//aar",
             "@support_appcompat_v7//aar",
@@ -62,9 +62,9 @@ def generate_maven_dependencies():
     maven_aar(
         name = "support_compat",
         settings = "//third_party:google_maven.xml",
-        artifact = "com.android.support:support-compat:27.0.2",
+        artifact = "com.android.support:support-compat:{}".format(android_build_tools_version),
         deps = [
-            "@support_annotations_27_0_2//jar",
+            "@support_annotations//jar",
             "@arch_lifecycle_runtime//aar",
         ],
     )
@@ -72,9 +72,9 @@ def generate_maven_dependencies():
     maven_aar(
         name = "support_media_compat",
         settings = "//third_party:google_maven.xml",
-        artifact = "com.android.support:support-media-compat:27.0.2",
+        artifact = "com.android.support:support-media-compat:{}".format(android_build_tools_version),
         deps = [
-            "@support_annotations_27_0_2//jar",
+            "@support_annotations//jar",
             "@support_compat//aar",
         ],
     )
@@ -82,9 +82,9 @@ def generate_maven_dependencies():
     maven_aar(
         name = "support_core_utils",
         settings = "//third_party:google_maven.xml",
-        artifact = "com.android.support:support-core-utils:27.0.2",
+        artifact = "com.android.support:support-core-utils:{}".format(android_build_tools_version),
         deps = [
-            "@support_annotations_27_0_2//jar",
+            "@support_annotations//jar",
             "@support_compat//aar",
         ],
     )
@@ -92,9 +92,9 @@ def generate_maven_dependencies():
     maven_aar(
         name = "support_core_ui",
         settings = "//third_party:google_maven.xml",
-        artifact = "com.android.support:support-core-ui:27.0.2",
+        artifact = "com.android.support:support-core-ui:{}".format(android_build_tools_version),
         deps = [
-            "@support_annotations_27_0_2//jar",
+            "@support_annotations//jar",
             "@support_compat//aar",
         ],
     )
@@ -102,27 +102,27 @@ def generate_maven_dependencies():
     maven_aar(
         name = "support_fragment",
         settings = "//third_party:google_maven.xml",
-        artifact = "com.android.support:support-fragment:27.0.2",
+        artifact = "com.android.support:support-fragment:{}".format(android_build_tools_version),
         deps = [
             "@support_compat//aar",
             "@support_core_ui//aar",
             "@support_core_utils//aar",
-            "@support_annotations_27_0_2//jar",
+            "@support_annotations//jar",
         ],
     )
 
     maven_jar(
-        name = "support_annotations_27_0_2",
+        name = "support_annotations",
         settings = "//third_party:google_maven.xml",
-        artifact = "com.android.support:support-annotations:27.0.2",
+        artifact = "com.android.support:support-annotations:{}".format(android_build_tools_version),
     )
 
     maven_aar(
         name = "support_vector_drawable",
         settings = "//third_party:google_maven.xml",
-        artifact = "com.android.support:support-vector-drawable:27.0.2",
+        artifact = "com.android.support:support-vector-drawable:{}".format(android_build_tools_version),
         deps = [
-            "@support_annotations_27_0_2//jar",
+            "@support_annotations//jar",
             "@support_compat//aar",
         ],
     )
@@ -130,7 +130,7 @@ def generate_maven_dependencies():
     maven_aar(
         name = "support_animated_vector_drawable",
         settings = "//third_party:google_maven.xml",
-        artifact = "com.android.support:animated-vector-drawable:27.0.2",
+        artifact = "com.android.support:animated-vector-drawable:{}".format(android_build_tools_version),
         deps = [
             "@support_vector_drawable//aar",
             "@support_core_ui//aar",
@@ -140,9 +140,9 @@ def generate_maven_dependencies():
     maven_aar(
         name = "support_transition",
         settings = "//third_party:google_maven.xml",
-        artifact = "com.android.support:transition:27.0.2",
+        artifact = "com.android.support:transition:{}".format(android_build_tools_version),
         deps = [
-            "@support_annotations_27_0_2//jar",
+            "@support_annotations//jar",
             "@support_compat//aar",
         ],
     )
@@ -154,7 +154,7 @@ def generate_maven_dependencies():
         deps = [
             "@arch_lifecycle//jar",
             "@arch_core//jar",
-            "@support_annotations_26_1_0//jar",
+            "@support_annotations//jar",
         ],
     )
 
@@ -163,7 +163,7 @@ def generate_maven_dependencies():
         settings = "//third_party:google_maven.xml",
         artifact = "android.arch.lifecycle:common:1.0.3",
         deps = [
-            "@support_annotations_26_1_0//jar",
+            "@support_annotations//jar",
         ],
     )
 
@@ -172,14 +172,8 @@ def generate_maven_dependencies():
         settings = "//third_party:google_maven.xml",
         artifact = "android.arch.core:common:1.0.0",
         deps = [
-            "@support_annotations_26_1_0//jar",
+            "@support_annotations//jar",
         ],
-    )
-
-    maven_jar(
-        name = "support_annotations_26_1_0",
-        settings = "//third_party:google_maven.xml",
-        artifact = "com.android.support:support-annotations:26.1.0",
     )
 
     maven_jar(
@@ -237,7 +231,7 @@ def setup_android_app_dependencies():
             "@arch_lifecycle//jar",
             "@arch_lifecycle_runtime//aar",
             "@support_animated_vector_drawable//aar",
-            "@support_annotations_27_0_2//jar",
+            "@support_annotations//jar",
             "@support_appcompat_v7//aar",
             "@support_cardview_v7//aar",
             "@support_compat//aar",
