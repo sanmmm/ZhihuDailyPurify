@@ -92,7 +92,7 @@ public class BasicFeedActivity extends BaseActivity
     }
 
     private void refresh() {
-        swipeRefreshLayout.setRefreshing(true);
+        swipeRefreshLayout.post(() -> swipeRefreshLayout.setRefreshing(true));
 
         feedSource()
                 .subscribeOn(Schedulers.io())
