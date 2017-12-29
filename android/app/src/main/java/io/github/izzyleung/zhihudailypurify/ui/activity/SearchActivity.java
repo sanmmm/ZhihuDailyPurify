@@ -87,7 +87,7 @@ public class SearchActivity extends BaseActivity implements SingleObserver<Zhihu
 
     private void initDialog() {
         //noinspection deprecation
-        dialog = new ProgressDialog(SearchActivity.this);
+        dialog = new ProgressDialog(this);
         dialog.setMessage(getString(R.string.searching));
         dialog.setCancelable(true);
     }
@@ -100,13 +100,19 @@ public class SearchActivity extends BaseActivity implements SingleObserver<Zhihu
     @Override
     public void onSuccess(ZhihuDailyPurify.Feed feed) {
         dialog.dismiss();
+
         adapter.updateFeed(feed);
         headerAdapter.updateFeed(feed);
+
+        if (feed.getNewsCount() == 0) {
+            showSnackbar(R.string.no_result_found);
+        }
     }
 
     @Override
     public void onError(Throwable e) {
         dialog.dismiss();
-        showSnackbar(R.string.no_result_found);
+
+        showSnackbar(R.string.network_error);
     }
 }
