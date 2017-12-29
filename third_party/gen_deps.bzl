@@ -297,3 +297,18 @@ def setup_rules_docker():
         strip_prefix = "rules_docker-master",
         url = "https://github.com/bazelbuild/rules_docker/archive/master.zip",
     )
+
+def setup_rules_apple():
+    native.http_archive(
+        name = "build_bazel_rules_apple",
+        url = "https://github.com/bazelbuild/rules_apple/archive/master.zip",
+        strip_prefix = "rules_apple-master",
+    )
+
+def swift_protobuf():
+    native.new_http_archive(
+        name = "swift_protobuf",
+        url = "https://github.com/apple/swift-protobuf/archive/master.zip",
+        strip_prefix = "swift-protobuf-master",
+        build_file = "//third_party:BUILD.swift_protobuf",
+    )

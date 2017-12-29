@@ -1,0 +1,42 @@
+load("@build_bazel_rules_apple//apple:swift.bzl", "swift_library")
+load("@build_bazel_rules_apple//apple:macos.bzl", "macos_command_line_application")
+
+swift_library(
+    name = "swift_protobuf",
+    module_name = "SwiftProtobuf",
+    srcs = glob([
+        "Sources/SwiftProtobuf/*.swift",
+    ]),
+)
+
+swift_library(
+    name = "swift_protobuf_plugin_library",
+    module_name = "SwiftProtobufPluginLibrary",
+    srcs = glob([
+        "Sources/SwiftProtobufPluginLibrary/*.swift",
+    ]),
+    deps = [
+        ":swift_protobuf",
+    ]
+)
+
+swift_library(
+    name = "protoc_gen_swift",
+    srcs = glob([
+        "Sources/protoc-gen-swift/*.swift",
+    ]),
+    deps = [
+        ":swift_protobuf",
+        ":swift_protobuf_plugin_library",
+    ],
+)
+
+macos_command_line_application(
+    name = "protoc_swift_plugin",
+    visibility = ["//visibility:public"],
+    deps = [
+        "swift_protobuf",
+        "swift_protobuf_plugin_library",
+        "protoc_gen_swift",
+    ],
+)

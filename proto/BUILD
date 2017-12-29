@@ -1,3 +1,14 @@
+genrule(
+    name = "zhihu_daily_purify_proto_compiled_swift",
+    srcs = ["zhihu_daily_purify.proto"],
+    outs = ["zhihu_daily_purify.pb.swift"],
+    tools = [
+        "@com_google_protobuf//:protoc",
+        "@swift_protobuf//:protoc_swift_plugin",
+    ],
+    cmd = "$(location @com_google_protobuf//:protoc) --plugin=protoc-gen-custom=$(location @swift_protobuf//:protoc_swift_plugin) -I=proto --swift_out=$(@D) $<",
+)
+
 py_library(
     name = "zhihu_daily_purify_py_proto",
     srcs = [":zhihu_daily_purify_proto_compiled_python"],
