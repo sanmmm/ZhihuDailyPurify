@@ -20,4 +20,5 @@ Which means, at the end of the `container_image` rule, you have to add and empty
 
 ## Deploy to Heroku
 `bazel run //server:zhihu_daily_purify_server_docker`  
-`docker tag bazel/server:zhihu_daily_purify_server_docker registry.heroku.com/<YOUR_APP_NAME_HERE>/<WORKER_TYPE>`
+
+`docker tag bazel/server:zhihu_daily_purify_server_docker registry.heroku.com/<APP_NAME>/<WORKER_TYPE>`
