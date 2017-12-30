@@ -22,5 +22,3 @@ Werkzeug==0.13
 
 protobuf==3.5.1
 six==1.11.0
-
-gunicorn==19.7.1
