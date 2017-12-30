@@ -19,15 +19,15 @@ py_binary(
 )
 
 py_image(
-    name = "zhihu_dailiy_purify_server_base",
+    name = "zhihu_daily_purify_server_base",
     srcs = [":python_code"],
     deps = [":server"],
     main = "server.py",
 )
 
 container_image(
-    name = "zhihu_dailiy_purify_server_docker",
-    base = ":zhihu_dailiy_purify_server_base",
+    name = "zhihu_daily_purify_server_docker",
+    base = ":zhihu_daily_purify_server_base",
     directory = "/app/server",
     files = [":database.ini"],
     cmd = [""],
