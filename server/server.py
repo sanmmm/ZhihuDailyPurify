@@ -1,4 +1,5 @@
 import os
+import sys
 from flask import Flask
 
 import controller
@@ -6,21 +7,21 @@ import controller
 app = Flask(__name__)
 
 
-@app.route("/")
+@app.route('/')
 def hello():
-    return "Index"
+    return 'Index'
 
 
-@app.route("/news/<date>")
+@app.route('/news/<date>')
 def feed_of_date(date):
     return controller.feed_of_date(date)
 
 
-@app.route("/search/<keyword>")
+@app.route('/search/<keyword>')
 def search(keyword):
     return controller.search(keyword)
 
 
 if __name__ == '__main__':
-    port = os.environ.get('PORT', 5000)
-    app.run(port=int(port))
+    print(sys.argv)
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
