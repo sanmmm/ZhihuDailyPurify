@@ -28,11 +28,16 @@ __Disclaimer - 声明__
 
 Set `ANDROID_HOME` environment variable properly - 将 `ANDROID_HOME` 环境变量指向你的 Android SDK 目录  
 
-
 ## Build - 构建
 `bazel build //...`  
 
-## Design Principles - 设计理念
+# What's special - 有何特殊
+  - Correct and fast incremental build using [bazel](bazel.build) - 使用 [bazel](bazel.build) 以获得快速又可靠的增量构建
+  - Build __hermit__ docker image without docker - 不使用 docker 却可获得完密的 docker 镜像
+    - https://github.com/izzyleung/ZhihuDailyPurify/tree/master/server/README.md
+  - A demonstrative nano mono repo - 一个示范性的小型单仓库代码库
+
+## App Design Principles - App 设计理念
   - Less is more - 更少即更多
   - Apply MVC patterns as much as possible - 尽可能实现 MVC 模式
   - Apply the concept of Reactive Functional programming as much as possible - 尽可能使用响应式函数编程
@@ -41,9 +46,6 @@ Set `ANDROID_HOME` environment variable properly - 将 `ANDROID_HOME` 环境变�
 
 ## API Reference - API 分析
 [APIs](https://github.com/izzyleung/ZhihuDailyPurify/wiki/%E7%9F%A5%E4%B9%8E%E6%97%A5%E6%8A%A5-API-%E5%88%86%E6%9E%90)
-
-## Accelerate Server - 加速服务器
-[Source Code](https://github.com/izzyleung/Zhihu-Daily-Purify-Backend)
 
 ## Contact - 联系
 `echo aXp6eWxpYW5nQGdtYWlsLmNvbQo= | base64 --decode`
