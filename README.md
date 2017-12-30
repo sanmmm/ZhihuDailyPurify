@@ -31,7 +31,7 @@ Set `ANDROID_HOME` environment variable properly - 将 `ANDROID_HOME` 环境变�
 ## Build - 构建
 `bazel build //...`  
 
-# What's special - 有何特殊
+## What's special - 有何特殊
   - Correct and fast incremental build using [bazel](bazel.build) - 使用 [bazel](bazel.build) 以获得快速又可靠的增量构建
   - Build __hermit__ docker image without docker - 不使用 docker 却可获得完密的 docker 镜像
     - https://github.com/izzyleung/ZhihuDailyPurify/tree/master/server/README.md
