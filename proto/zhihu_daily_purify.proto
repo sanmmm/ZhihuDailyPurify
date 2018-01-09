@@ -2,6 +2,9 @@ syntax = "proto3";
 
 package io.github.izzyleung;
 
+option optimize_for = LITE_RUNTIME;
+option swift_prefix = "ZDP";
+
 message Question {
     string title = 1;
     string url = 2;

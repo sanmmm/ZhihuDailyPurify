@@ -14,7 +14,7 @@ load("//third_party:gen_deps.bzl",
         "generate_java_dependencies",
         "generate_other_android_dependencies",
         "setup_protobuf",
-        "setup_rules_bazel",
+        "setup_rules_python",
         "setup_rules_docker",
         "setup_rules_apple",
         "swift_protobuf",
@@ -25,7 +25,7 @@ generate_java_dependencies()
 generate_other_android_dependencies()
 
 setup_protobuf()
-setup_rules_bazel()
+setup_rules_python()
 setup_rules_docker()
 setup_rules_apple()
 

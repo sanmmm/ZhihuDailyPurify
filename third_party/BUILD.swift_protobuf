@@ -32,7 +32,7 @@ swift_library(
 )
 
 macos_command_line_application(
-    name = "protoc_swift_plugin",
+    name = "protoc-gen-swift",
     visibility = ["//visibility:public"],
     deps = [
         "swift_protobuf",

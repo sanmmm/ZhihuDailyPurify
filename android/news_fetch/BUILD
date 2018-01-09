@@ -3,8 +3,8 @@ java_library(
     srcs = glob(["src/main/java/io/github/izzyleung/**/*.java"]),
     visibility = ["//android:__subpackages__"],
     deps = [
-        "//proto:zhihu_daily_purify_java_proto",
         "//third_party:news_fetch_dependencies",
+        "//proto:zhihu_daily_purify_java_proto",
     ],
 )
 

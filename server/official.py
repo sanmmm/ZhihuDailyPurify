@@ -17,7 +17,7 @@ def stories_for_date(date):
 def document_for_story(story):
     return BeautifulSoup(
         _json_from_url(ZHIHU_DAILY_URL + str(story.story_id)).get("body", ""),
-        "lxml"
+        "html.parser"
     )
 
 

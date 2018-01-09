@@ -278,13 +278,7 @@ def setup_protobuf():
         urls = ["https://github.com/google/protobuf/archive/v3.5.0.zip"],
     )
 
-    native.http_archive(
-        name = "com_google_protobuf_javalite",
-        strip_prefix = "protobuf-javalite",
-        urls = ["https://github.com/google/protobuf/archive/javalite.zip"],
-    )
-
-def setup_rules_bazel():
+def setup_rules_python():
     native.http_archive(
         name = "io_bazel_rules_python",
         strip_prefix = "rules_python-master",
@@ -308,7 +302,8 @@ def setup_rules_apple():
 def swift_protobuf():
     native.new_http_archive(
         name = "swift_protobuf",
-        url = "https://github.com/apple/swift-protobuf/archive/master.zip",
-        strip_prefix = "swift-protobuf-master",
+        sha256 = "c71b8b7359e164c267ebdcec9c032506bea86ca3716df976ad5d0060ea05295b",
+        strip_prefix = "swift-protobuf-1.0.2",
         build_file = "//third_party:BUILD.swift_protobuf",
+        urls = ["https://github.com/apple/swift-protobuf/archive/1.0.2.zip"],
     )

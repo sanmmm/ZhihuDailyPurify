@@ -24,10 +24,10 @@ android_library(
     resource_files = [":resource_files"],
     visibility = ["//android:__pkg__"],
     deps = [
+        "//third_party:android_app_dependencies",
         "//android/widgets:all_widgets",
         "//android/news_fetch:news_fetch",
-        "//third_party:android_app_dependencies",
         "//proto:zhihu_daily_purify_java_proto",
-        "@com_google_protobuf_javalite//:protobuf_java_lite",
+        "@com_google_protobuf//:protobuf_java",
     ],
 )
