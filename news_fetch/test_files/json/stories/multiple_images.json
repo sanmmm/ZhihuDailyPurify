@@ -1,0 +1,12 @@
+{
+  "stories": [
+    {
+      "id": 1,
+      "title": "title",
+      "images": [
+        "should be selected",
+        "not this one"
+      ]
+    }
+  ]
+}

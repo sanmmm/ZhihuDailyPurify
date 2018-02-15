@@ -1,33 +1,33 @@
-filegroup(
-    name = "android_code",
-    srcs = glob(["src/main/java/io/github/izzyleung/zhihudailypurify/**/*.java"]),
-    visibility = ["//android:__pkg__"],
+package(
+  default_visibility = ["//android:__pkg__"],
 )
 
 filegroup(
-    name = "resource_files",
-    srcs = glob(["src/main/res/**"]),
-    visibility = ["//android:__pkg__"],
+  name = "android_code",
+  srcs = glob(["src/main/java/io/github/izzyleung/zhihudailypurify/**/*.java"]),
 )
 
 filegroup(
-    name = "manifest",
-    srcs = ["src/main/AndroidManifest.xml"],
-    visibility = ["//android:__pkg__"],
+  name = "resource_files",
+  srcs = glob(["src/main/res/**"]),
+)
+
+filegroup(
+  name = "manifest",
+  srcs = ["src/main/AndroidManifest.xml"],
 )
 
 android_library(
-    name = "app",
-    custom_package = "io.github.izzyleung.zhihudailypurify",
-    srcs = [":android_code"],
-    manifest = ":manifest",
-    resource_files = [":resource_files"],
-    visibility = ["//android:__pkg__"],
-    deps = [
-        "//third_party:android_app_dependencies",
-        "//android/widgets:all_widgets",
-        "//android/news_fetch:news_fetch",
-        "//proto:zhihu_daily_purify_java_proto",
-        "@com_google_protobuf//:protobuf_java",
-    ],
+  name = "app",
+  custom_package = "io.github.izzyleung.zhihudailypurify",
+  srcs = [":android_code"],
+  manifest = ":manifest",
+  resource_files = [":resource_files"],
+  deps = [
+    "//third_party:android_app_dependencies",
+    "//android/widgets:all_widgets",
+    "//news_fetch/android",
+    "//proto:zhihu_daily_purify_java_proto",
+    "@com_google_protobuf//:protobuf_java",
+  ],
 )

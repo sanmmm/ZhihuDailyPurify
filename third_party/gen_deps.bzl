@@ -177,7 +177,7 @@ def generate_android_support_libs_dependency(android_build_tools_version):
     )
 
 
-def generate_java_dependencies():
+def generate_news_fetch_android_dependencies():
     maven_jar(
         name = "json",
         artifact = "org.json:json:20171018",
@@ -201,6 +201,16 @@ def generate_java_dependencies():
         ],
     )
 
+    maven_jar(
+        name = "autovalue",
+        artifact = "com.google.auto.value:auto-value:1.5.3",
+    )
+
+def generate_news_fetch_android_test_dependencies():
+    maven_jar(
+        name = "junit",
+        artifact = "junit:junit:4.12",
+    )
 
 def generate_other_android_dependencies():
     maven_aar(
@@ -224,49 +234,6 @@ def generate_other_android_dependencies():
         artifact = "io.reactivex.rxjava2:rxandroid:2.0.1",
         deps = [
             "@rxjava//jar",
-        ]
-    )
-
-def setup_android_app_dependencies():
-    native.android_library(
-        name = "android_app_dependencies",
-        visibility = ["//visibility:public"],
-        exports = [
-            "@arch_core//jar",
-            "@arch_lifecycle//jar",
-            "@arch_lifecycle_runtime//aar",
-            "@support_animated_vector_drawable//aar",
-            "@support_annotations//jar",
-            "@support_appcompat_v7//aar",
-            "@support_cardview_v7//aar",
-            "@support_compat//aar",
-            "@support_core_ui//aar",
-            "@support_core_utils//aar",
-            "@support_design//aar",
-            "@support_fragment//aar",
-            "@support_media_compat//aar",
-            "@support_recyclerview_v7//aar",
-            "@support_transition//aar",
-            "@support_v4//aar",
-            "@support_vector_drawable//aar",            
-            "@rxjava//jar",
-            "@reactive_stream//jar",
-            "@universal_image_loader//aar",
-            "@android_times_square//aar",
-            "@recyclerview_stickyheaders//aar",
-            "@rxandroid//aar",
-        ]
-    )
-
-def set_up_news_fetch_dependencies():
-    native.java_library(
-        name = "news_fetch_dependencies",
-        visibility = ["//visibility:public"],
-        exports = [
-            "@jsoup//jar",
-            "@reactive_stream//jar",
-            "@rxjava//jar",
-            "@json//jar",
         ]
     )
 
@@ -297,13 +264,4 @@ def setup_rules_apple():
         name = "build_bazel_rules_apple",
         url = "https://github.com/bazelbuild/rules_apple/archive/master.zip",
         strip_prefix = "rules_apple-master",
-    )
-
-def swift_protobuf():
-    native.new_http_archive(
-        name = "swift_protobuf",
-        sha256 = "c71b8b7359e164c267ebdcec9c032506bea86ca3716df976ad5d0060ea05295b",
-        strip_prefix = "swift-protobuf-1.0.2",
-        build_file = "//third_party:BUILD.swift_protobuf",
-        urls = ["https://github.com/apple/swift-protobuf/archive/1.0.2.zip"],
     )
