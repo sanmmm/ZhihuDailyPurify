@@ -21,12 +21,14 @@ load("//third_party:gen_deps.bzl",
 )
 
 generate_android_support_libs_dependency(BUILD_TOOLS_VERSION)
-generate_news_fetch_android_dependencies()
 generate_other_android_dependencies()
+
+generate_news_fetch_android_dependencies()
 
 generate_news_fetch_android_test_dependencies()
 
 setup_protobuf()
+
 setup_rules_python()
 setup_rules_docker()
 setup_rules_apple()

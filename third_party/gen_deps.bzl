@@ -237,6 +237,7 @@ def generate_other_android_dependencies():
         ]
     )
 
+# Protobuf
 def setup_protobuf():
     native.http_archive(
         name = "com_google_protobuf",
@@ -245,6 +246,7 @@ def setup_protobuf():
         urls = ["https://github.com/google/protobuf/archive/v3.5.0.zip"],
     )
 
+# Bazel rules
 def setup_rules_python():
     native.http_archive(
         name = "io_bazel_rules_python",
