@@ -64,6 +64,27 @@ public class ZhihuDailyOfficial_StoriesTests {
     storySubscriber.assertComplete();
   }
 
+  @Test
+  public void testNormalScenario() throws IOException {
+    setUpStoriesTest("json/stories/normal.json");
+
+    storySubscriber.assertValueAt(0, s -> {
+      boolean idMatch = s.id() == 1;
+      boolean titleMatch = s.title().equals("first title");
+      boolean thumbnailUrlMath = s.thumbnailUrl().equals("image url 1");
+
+      return idMatch && titleMatch && thumbnailUrlMath;
+    });
+    storySubscriber.assertValueAt(1, s -> {
+      boolean idMatch = s.id() == 2;
+      boolean titleMatch = s.title().equals("second title");
+      boolean thumbnailUrlMath = s.thumbnailUrl().equals("image url 2");
+
+      return idMatch && titleMatch && thumbnailUrlMath;
+    });
+    storySubscriber.assertComplete();
+  }
+
   private void setUpStoriesTest(String testFileName) throws IOException {
     ZhihuDailyOfficial.stories(Commons.openInputStream(testFileName)).subscribe(storySubscriber);
   }

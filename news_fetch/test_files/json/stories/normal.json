@@ -1,0 +1,18 @@
+{
+  "stories": [
+    {
+      "id": 1,
+      "title": "first title",
+      "images": [
+        "image url 1"
+      ]
+    },
+    {
+      "id": 2,
+      "title": "second title",
+      "images": [
+        "image url 2"
+      ]
+    }
+  ]
+}
