@@ -29,20 +29,50 @@ public class ZhihuDailyOfficial {
 
   }
 
-  private static String mkString(InputStream input) {
-    return new BufferedReader(new InputStreamReader(input))
-        .lines()
-        .collect(Collectors.joining("\n"));
+  public static Single<ZhihuDailyPurify.Feed> feedForDate(String date) throws IOException {
+    Flowable<Story> stories = stories(ZhihuDaily.storiesForDate(date));
+    Flowable<Document> documents = stories.map(ZhihuDaily::storyDetail)
+        .flatMap(ZhihuDailyOfficial::documents);
+    Flowable<String> dates = stories.map(s -> date);
+
+    Single<ZhihuDailyPurify.Feed.Builder> builder = Single.just(ZhihuDailyPurify.Feed.newBuilder());
+    Single<List<ZhihuDailyPurify.News>> news = Flowable
+        .zip(dates, stories, documents, Triple::create)
+        .flatMap(ZhihuDailyOfficial::convertToNews)
+        .toList();
+
+    return Single.zip(builder, news, (b, n) -> b.addAllNews(n).build());
   }
 
-  private static JSONObject[] toArray(JSONArray jsonArray) throws JSONException {
-    JSONObject[] result = new JSONObject[jsonArray.length()];
+  static Flowable<Document> documents(InputStream in) {
+    return Flowable.just(mkString(in))
+        .map(JSONObject::new)
+        .filter(j -> j.has(ZhihuDaily.KEY_BODY))
+        .map(j -> Jsoup.parse(j.getString(ZhihuDaily.KEY_BODY)))
+        .defaultIfEmpty(new Document(""));
+  }
 
-    for (int i = 0; i < jsonArray.length(); i++) {
-      result[i] = jsonArray.getJSONObject(i);
-    }
+  static Flowable<Story> stories(InputStream in) {
+    return Flowable.just(mkString(in))
+        .map(JSONObject::new)
+        .filter(j -> j.has(ZhihuDaily.KEY_STORIES))
+        .map(j -> j.getJSONArray(ZhihuDaily.KEY_STORIES))
+        .flatMap(j -> Flowable.fromArray(toArray(j)))
+        .flatMap(ZhihuDailyOfficial::convertToStory);
+  }
 
-    return result;
+  static Flowable<News> convertToNews(
+      Triple<String, Story, Document> triple) {
+    return getQuestions(triple)
+        .filter(qs -> !qs.isEmpty())
+        .map(qs -> ZhihuDailyPurify.News
+            .newBuilder()
+            .setDate(triple.left())
+            .setTitle(triple.middle().title())
+            .setThumbnailUrl(triple.middle().thumbnailUrl())
+            .addAllQuestions(qs)
+            .build())
+        .toFlowable();
   }
 
   private static Flowable<Story> convertToStory(JSONObject j) throws JSONException {
@@ -63,37 +93,6 @@ public class ZhihuDailyOfficial {
                 .setThumbnailUrl(thumbnailUrl)
                 .build()
         );
-  }
-
-  static Flowable<Document> documents(InputStream in) {
-    return Flowable.just(mkString(in))
-        .map(JSONObject::new)
-        .filter(j -> j.has(ZhihuDaily.KEY_BODY))
-        .map(j -> Jsoup.parse(j.getString(ZhihuDaily.KEY_BODY)))
-        .defaultIfEmpty(new Document(""));
-  }
-
-  static Flowable<Story> stories(InputStream in) {
-    return Flowable.just(mkString(in))
-        .map(JSONObject::new)
-        .filter(j -> j.has(ZhihuDaily.KEY_STORIES))
-        .map(j -> j.getJSONArray(ZhihuDaily.KEY_STORIES))
-        .flatMap(j -> Flowable.fromArray(toArray(j)))
-        .flatMap(ZhihuDailyOfficial::convertToStory);
-  }
-
-  private static Flowable<News> convertToNews(
-      Triple<String, Story, Document> triple) {
-    return getQuestions(triple)
-        .filter(qs -> !qs.isEmpty())
-        .map(qs -> ZhihuDailyPurify.News
-            .newBuilder()
-            .setDate(triple.left())
-            .setTitle(triple.middle().title())
-            .setThumbnailUrl(triple.middle().thumbnailUrl())
-            .addAllQuestions(qs)
-            .build())
-        .toFlowable();
   }
 
   private static Single<List<ZhihuDailyPurify.Question>> getQuestions(
@@ -128,19 +127,20 @@ public class ZhihuDailyOfficial {
         .map(e -> e.attr("href"));
   }
 
-  public static Single<ZhihuDailyPurify.Feed> feedForDate(String date) throws IOException {
-    Flowable<Story> stories = stories(ZhihuDaily.storiesForDate(date));
-    Flowable<Document> documents = stories.map(ZhihuDaily::storyDetail)
-        .flatMap(ZhihuDailyOfficial::documents);
-    Flowable<String> dates = stories.map(s -> date);
+  private static String mkString(InputStream input) {
+    return new BufferedReader(new InputStreamReader(input))
+        .lines()
+        .collect(Collectors.joining("\n"));
+  }
 
-    Single<ZhihuDailyPurify.Feed.Builder> builder = Single.just(ZhihuDailyPurify.Feed.newBuilder());
-    Single<List<ZhihuDailyPurify.News>> news = Flowable
-        .zip(dates, stories, documents, Triple::create)
-        .flatMap(ZhihuDailyOfficial::convertToNews)
-        .toList();
+  private static JSONObject[] toArray(JSONArray jsonArray) throws JSONException {
+    JSONObject[] result = new JSONObject[jsonArray.length()];
 
-    return Single.zip(builder, news, (b, n) -> b.addAllNews(n).build());
+    for (int i = 0; i < jsonArray.length(); i++) {
+      result[i] = jsonArray.getJSONObject(i);
+    }
+
+    return result;
   }
 
   private static class ZhihuDaily {
