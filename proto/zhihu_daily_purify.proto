@@ -3,7 +3,7 @@ syntax = "proto3";
 package io.github.izzyleung;
 
 option optimize_for = LITE_RUNTIME;
-option swift_prefix = "ZDP";
+option objc_class_prefix = "ZDP";
 
 message Question {
     string title = 1;

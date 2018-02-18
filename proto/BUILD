@@ -1,5 +1,26 @@
 load("@pip_dependencies//:requirements.bzl", "requirement")
 
+objc_library(
+  name = "zhihu_daily_purify_objc_proto",
+  srcs = [":zhihu_daily_purify_proto_compiled_objc"],
+  copts = ["-fno-objc-arc"],
+  deps = [
+    "@com_google_protobuf//:protobuf_objc",
+    "@com_google_protobuf//:objectivec",
+  ],
+)
+
+genrule(
+  name = "zhihu_daily_purify_proto_compiled_objc",
+  srcs = ["zhihu_daily_purify.proto"],
+  outs = [
+    "ZhihuDailyPurify.pbobjc.m",
+    "ZhihuDailyPurify.pbobjc.h",
+  ],
+  tools = ["@com_google_protobuf//:protoc"],
+  cmd = "$(location @com_google_protobuf//:protoc) -I=proto --objc_out=$(@D) $<",
+)
+
 py_library(
   name = "zhihu_daily_purify_py_proto",
   srcs = [":zhihu_daily_purify_proto_compiled_python"],
