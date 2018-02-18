@@ -12,7 +12,7 @@ def feed_of_date(date):
         return _empty_feed(date).SerializeToString()
 
     if dt.is_after_current_date_in_china():
-        date = DateTimeChina.current_date_in_china()
+        date = DateTimeChina.current_date()
 
     if mongo.has_date_cached(date):
         feed = mongo.feed_for_date(date)

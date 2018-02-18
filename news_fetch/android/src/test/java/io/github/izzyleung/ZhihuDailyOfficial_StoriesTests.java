@@ -18,7 +18,7 @@ public class ZhihuDailyOfficial_StoriesTests {
 
   @Test
   public void testErrorResponse() throws IOException {
-    setUpStoriesTest("json/stories/error_stories.json");
+    setUpStoriesTest("json/error_stories.json");
 
     storySubscriber.assertError(e -> e instanceof JSONException);
     storySubscriber.assertNotComplete();
@@ -26,7 +26,7 @@ public class ZhihuDailyOfficial_StoriesTests {
 
   @Test
   public void testNoStories() throws IOException {
-    setUpStoriesTest("json/stories/no_stories.json");
+    setUpStoriesTest("json/no_stories.json");
 
     storySubscriber.assertNoValues();
     storySubscriber.assertComplete();
@@ -34,7 +34,7 @@ public class ZhihuDailyOfficial_StoriesTests {
 
   @Test
   public void testEmptyStories() throws IOException {
-    setUpStoriesTest("json/stories/empty_stories.json");
+    setUpStoriesTest("json/empty_stories.json");
 
     storySubscriber.assertNoValues();
     storySubscriber.assertComplete();
@@ -42,7 +42,7 @@ public class ZhihuDailyOfficial_StoriesTests {
 
   @Test
   public void testNoThumbnailUrl() throws IOException {
-    setUpStoriesTest("json/stories/no_images.json");
+    setUpStoriesTest("json/no_images.json");
 
     storySubscriber.assertValue(s -> s.thumbnailUrl().isEmpty());
     storySubscriber.assertComplete();
@@ -50,7 +50,7 @@ public class ZhihuDailyOfficial_StoriesTests {
 
   @Test
   public void testEmptyThumbnailUrl() throws IOException {
-    setUpStoriesTest("json/stories/empty_images.json");
+    setUpStoriesTest("json/empty_images.json");
 
     storySubscriber.assertValue(s -> s.thumbnailUrl().isEmpty());
     storySubscriber.assertComplete();
@@ -58,7 +58,7 @@ public class ZhihuDailyOfficial_StoriesTests {
 
   @Test
   public void testMultipleThumbnailUrls() throws IOException {
-    setUpStoriesTest("json/stories/multiple_images.json");
+    setUpStoriesTest("json/multiple_images.json");
 
     storySubscriber.assertValue(s -> s.thumbnailUrl().equals("should be selected"));
     storySubscriber.assertComplete();
@@ -66,7 +66,7 @@ public class ZhihuDailyOfficial_StoriesTests {
 
   @Test
   public void testNormalScenario() throws IOException {
-    setUpStoriesTest("json/stories/normal.json");
+    setUpStoriesTest("json/normal.json");
 
     storySubscriber.assertValueAt(0, s -> {
       boolean idMatch = s.id() == 1;

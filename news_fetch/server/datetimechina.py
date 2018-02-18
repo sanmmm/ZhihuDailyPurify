@@ -4,45 +4,45 @@ from pytz import timezone
 
 class DateTimeChina(object):
     BIRTHDAY = datetime(2013, 5, 19)
-    DATE_FORMAT = '%Y%m%d'
+    FORMAT = '%Y%m%d'
 
     def __init__(self, dt):
         super(DateTimeChina, self).__init__()
         self.dt = dt
 
     def is_before_birthday(self):
-        return self.dt <= DateTimeChina._convert_to_time_in_china(DateTimeChina.BIRTHDAY)
+        return self.dt <= DateTimeChina._convert(DateTimeChina.BIRTHDAY)
 
     def is_after_current_date_in_china(self):
-        return self.dt > DateTimeChina._current_time_in_china()
+        return self.dt > DateTimeChina._current()
 
     @staticmethod
     def parse(date):
         try:
-            d = datetime.strptime(date, DateTimeChina.DATE_FORMAT)
-            return DateTimeChina(DateTimeChina._convert_to_time_in_china(d))
+            d = datetime.strptime(date, DateTimeChina.FORMAT)
+            return DateTimeChina(DateTimeChina._convert(d))
         except ValueError:
             return None
 
     @staticmethod
-    def current_date_in_china():
-        return datetime.strftime(DateTimeChina._current_time_in_china(), DateTimeChina.DATE_FORMAT)
+    def current_date():
+        return datetime.strftime(DateTimeChina._current(), DateTimeChina.FORMAT)
 
     @staticmethod
     def _get_gmt_timezone():
         return timezone('GMT')
 
     @staticmethod
-    def _get_china_timezone():
+    def _timezone_for_shanghai():
         return timezone('Asia/Shanghai')
 
     @staticmethod
-    def _convert_to_time_in_china(date):
-        return DateTimeChina._get_china_timezone().localize(date)
+    def _convert(date):
+        return DateTimeChina._timezone_for_shanghai().localize(date)
 
     @staticmethod
-    def _current_time_in_china():
-        shanghai = DateTimeChina._get_china_timezone()
+    def _current():
+        shanghai = DateTimeChina._timezone_for_shanghai()
         gmt = DateTimeChina._get_gmt_timezone()
         now_gmt = gmt.localize(datetime.now())
         return now_gmt.astimezone(shanghai)

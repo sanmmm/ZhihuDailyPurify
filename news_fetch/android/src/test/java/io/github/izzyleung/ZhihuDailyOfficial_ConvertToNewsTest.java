@@ -39,7 +39,7 @@ public class ZhihuDailyOfficial_ConvertToNewsTest {
     ZhihuDailyOfficial.convertToNews(triple).subscribe(newsObserver);
 
     // When question has no title in details page, default to title of the story it associates with.
-    newsObserver.assertValue(news -> news.getTitle().equals(storyTitle));
+    newsObserver.assertValue(news -> news.getQuestions(0).getTitle().equals(storyTitle));
     newsObserver.assertComplete();
   }
 
@@ -49,7 +49,7 @@ public class ZhihuDailyOfficial_ConvertToNewsTest {
     ZhihuDailyOfficial.convertToNews(triple).subscribe(newsObserver);
 
     // When question has empty title in details page, default to title of the story it associates with.
-    newsObserver.assertValue(news -> news.getTitle().equals(storyTitle));
+    newsObserver.assertValue(news -> news.getQuestions(0).getTitle().equals(storyTitle));
     newsObserver.assertComplete();
   }
 

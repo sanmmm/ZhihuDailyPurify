@@ -5,7 +5,7 @@ load("@io_bazel_rules_docker//container:container.bzl", "container_image")
 
 filegroup(
   name = "python_code",
-  srcs = glob(["**/*.py"]),
+  srcs = glob(["**/*.py"], exclude = ["tests.py"]),
   visibility = ["//visibility:private"],
 )
 
@@ -16,6 +16,18 @@ py_binary(
   deps = [
     "//proto:zhihu_daily_purify_py_proto",
   ] + all_requirements,
+)
+
+py_test(
+  name = "server_tests",
+  srcs = ["tests.py"],
+  data = ["//news_fetch/test_files:test_files"],
+  deps = [
+    ":server",
+    "//proto:zhihu_daily_purify_py_proto",
+  ] + all_requirements,
+  main = "tests.py",
+  size = "small",
 )
 
 py_image(
