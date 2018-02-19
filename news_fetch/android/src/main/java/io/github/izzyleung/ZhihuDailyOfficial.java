@@ -44,14 +44,6 @@ public class ZhihuDailyOfficial {
     return Single.zip(builder, news, (b, n) -> b.addAllNews(n).build());
   }
 
-  static Flowable<Document> documents(InputStream in) {
-    return Flowable.just(mkString(in))
-        .map(JSONObject::new)
-        .filter(j -> j.has(ZhihuDaily.KEY_BODY))
-        .map(j -> Jsoup.parse(j.getString(ZhihuDaily.KEY_BODY)))
-        .defaultIfEmpty(new Document(""));
-  }
-
   static Flowable<Story> stories(InputStream in) {
     return Flowable.just(mkString(in))
         .map(JSONObject::new)
@@ -73,6 +65,14 @@ public class ZhihuDailyOfficial {
             .addAllQuestions(qs)
             .build())
         .toFlowable();
+  }
+
+  private static Flowable<Document> documents(InputStream in) {
+    return Flowable.just(mkString(in))
+        .map(JSONObject::new)
+        .filter(j -> j.has(ZhihuDaily.KEY_BODY))
+        .map(j -> Jsoup.parse(j.getString(ZhihuDaily.KEY_BODY)))
+        .defaultIfEmpty(new Document(""));
   }
 
   private static Flowable<Story> convertToStory(JSONObject j) throws JSONException {

@@ -17,7 +17,6 @@ load("//third_party:gen_deps.bzl",
         "setup_protobuf",
         "setup_rules_python",
         "setup_rules_docker",
-        "setup_rules_apple",
 )
 
 generate_android_support_libs_dependency(BUILD_TOOLS_VERSION)
@@ -31,7 +30,6 @@ setup_protobuf()
 
 setup_rules_python()
 setup_rules_docker()
-setup_rules_apple()
 
 # Set up pip dependencies
 load("@io_bazel_rules_python//python:pip.bzl", "pip_import")
