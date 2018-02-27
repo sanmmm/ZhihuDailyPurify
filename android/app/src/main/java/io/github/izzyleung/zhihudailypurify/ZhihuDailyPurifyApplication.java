@@ -13,39 +13,40 @@ import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import io.github.izzyleung.zhihudailypurify.db.FeedDataSource;
 
 public final class ZhihuDailyPurifyApplication extends Application {
-    private static ZhihuDailyPurifyApplication applicationContext;
-    private static FeedDataSource dataSource;
 
-    public static void initImageLoader(Context context) {
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
-                .denyCacheImageMultipleSizesInMemory()
-                .threadPriority(Thread.NORM_PRIORITY - 2)
-                .diskCacheFileNameGenerator(new Md5FileNameGenerator())
-                .tasksProcessingOrder(QueueProcessingType.LIFO)
-                .build();
-        ImageLoader.getInstance().init(config);
-    }
+  private static ZhihuDailyPurifyApplication applicationContext;
+  private static FeedDataSource dataSource;
 
-    public static ZhihuDailyPurifyApplication getInstance() {
-        return applicationContext;
-    }
+  public static void initImageLoader(Context context) {
+    ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
+        .denyCacheImageMultipleSizesInMemory()
+        .threadPriority(Thread.NORM_PRIORITY - 2)
+        .diskCacheFileNameGenerator(new Md5FileNameGenerator())
+        .tasksProcessingOrder(QueueProcessingType.LIFO)
+        .build();
+    ImageLoader.getInstance().init(config);
+  }
 
-    public static FeedDataSource getDataSource() {
-        return dataSource;
-    }
+  public static ZhihuDailyPurifyApplication getInstance() {
+    return applicationContext;
+  }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        applicationContext = this;
+  public static FeedDataSource getDataSource() {
+    return dataSource;
+  }
 
-        initImageLoader(getApplicationContext());
+  @Override
+  public void onCreate() {
+    super.onCreate();
+    applicationContext = this;
 
-        dataSource = new FeedDataSource(getApplicationContext());
-        dataSource.open();
-    }
+    initImageLoader(getApplicationContext());
 
-    public static SharedPreferences getSharedPreferences() {
-        return PreferenceManager.getDefaultSharedPreferences(applicationContext);
-    }
+    dataSource = new FeedDataSource(getApplicationContext());
+    dataSource.open();
+  }
+
+  public static SharedPreferences getSharedPreferences() {
+    return PreferenceManager.getDefaultSharedPreferences(applicationContext);
+  }
 }

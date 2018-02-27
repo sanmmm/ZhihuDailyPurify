@@ -1,13 +1,12 @@
 package io.github.izzyleung;
 
-import io.github.izzyleung.utils.Story;
 import io.reactivex.subscribers.TestSubscriber;
 import java.io.IOException;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ZhihuDailyOfficial_StoriesTests {
+public class Stories_FromJsonTests {
 
   private TestSubscriber<Story> storySubscriber;
 
@@ -18,7 +17,7 @@ public class ZhihuDailyOfficial_StoriesTests {
 
   @Test
   public void testErrorResponse() throws IOException {
-    setUpStoriesTest("json/error_stories.json");
+    setUpTest("json/error_stories.json");
 
     storySubscriber.assertError(e -> e instanceof JSONException);
     storySubscriber.assertNotComplete();
@@ -26,7 +25,7 @@ public class ZhihuDailyOfficial_StoriesTests {
 
   @Test
   public void testNoStories() throws IOException {
-    setUpStoriesTest("json/no_stories.json");
+    setUpTest("json/no_stories.json");
 
     storySubscriber.assertNoValues();
     storySubscriber.assertComplete();
@@ -34,7 +33,7 @@ public class ZhihuDailyOfficial_StoriesTests {
 
   @Test
   public void testEmptyStories() throws IOException {
-    setUpStoriesTest("json/empty_stories.json");
+    setUpTest("json/empty_stories.json");
 
     storySubscriber.assertNoValues();
     storySubscriber.assertComplete();
@@ -42,7 +41,7 @@ public class ZhihuDailyOfficial_StoriesTests {
 
   @Test
   public void testNoThumbnailUrl() throws IOException {
-    setUpStoriesTest("json/no_images.json");
+    setUpTest("json/no_images.json");
 
     storySubscriber.assertValue(s -> s.thumbnailUrl().isEmpty());
     storySubscriber.assertComplete();
@@ -50,7 +49,7 @@ public class ZhihuDailyOfficial_StoriesTests {
 
   @Test
   public void testEmptyThumbnailUrl() throws IOException {
-    setUpStoriesTest("json/empty_images.json");
+    setUpTest("json/empty_images.json");
 
     storySubscriber.assertValue(s -> s.thumbnailUrl().isEmpty());
     storySubscriber.assertComplete();
@@ -58,7 +57,7 @@ public class ZhihuDailyOfficial_StoriesTests {
 
   @Test
   public void testMultipleThumbnailUrls() throws IOException {
-    setUpStoriesTest("json/multiple_images.json");
+    setUpTest("json/multiple_images.json");
 
     storySubscriber.assertValue(s -> s.thumbnailUrl().equals("should be selected"));
     storySubscriber.assertComplete();
@@ -66,7 +65,7 @@ public class ZhihuDailyOfficial_StoriesTests {
 
   @Test
   public void testNormalScenario() throws IOException {
-    setUpStoriesTest("json/normal.json");
+    setUpTest("json/normal.json");
 
     storySubscriber.assertValueAt(0, s -> {
       boolean idMatch = s.id() == 1;
@@ -85,7 +84,7 @@ public class ZhihuDailyOfficial_StoriesTests {
     storySubscriber.assertComplete();
   }
 
-  private void setUpStoriesTest(String testFileName) throws IOException {
-    ZhihuDailyOfficial.stories(Commons.openInputStream(testFileName)).subscribe(storySubscriber);
+  private void setUpTest(String testFileName) throws IOException {
+    Stories.fromJson(Commons.openInputStream(testFileName)).subscribe(storySubscriber);
   }
 }

@@ -1,8 +1,7 @@
 package io.github.izzyleung;
 
 import io.github.izzyleung.ZhihuDailyPurify.News;
-import io.github.izzyleung.utils.Story;
-import io.github.izzyleung.utils.Triple;
+import io.github.izzyleung.utils.Tuple;
 import io.reactivex.subscribers.TestSubscriber;
 import java.io.IOException;
 import org.jsoup.Jsoup;
@@ -10,24 +9,26 @@ import org.jsoup.nodes.Document;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ZhihuDailyOfficial_ConvertToNewsTest {
+public class ZhihuDailyOfficial_ToNewsTest {
 
   private static final String date = "Date";
   private static final String storyTitle = "Story Title";
   private static final String thumbnailUrl = "Thumbnail URL";
 
-  private Triple<String, Story, Document> triple;
+  private ZhihuDailyOfficial official;
+  private Tuple<Story, Document> tuple;
   private TestSubscriber<News> newsObserver;
 
   @Before
   public void setUp() {
+    official = ZhihuDailyOfficial.of(date);
     newsObserver = new TestSubscriber<>();
   }
 
   @Test
   public void testNoQuestions() throws IOException {
-    triple = setUpTriple("html/no_questions.html");
-    ZhihuDailyOfficial.convertToNews(triple).subscribe(newsObserver);
+    tuple = setUpTuple("html/no_questions.html");
+    official.toNews(tuple).subscribe(newsObserver);
 
     newsObserver.assertNoValues();
     newsObserver.assertComplete();
@@ -35,8 +36,8 @@ public class ZhihuDailyOfficial_ConvertToNewsTest {
 
   @Test
   public void testNoQuestionTitle() throws IOException {
-    triple = setUpTriple("html/no_title.html");
-    ZhihuDailyOfficial.convertToNews(triple).subscribe(newsObserver);
+    tuple = setUpTuple("html/no_title.html");
+    official.toNews(tuple).subscribe(newsObserver);
 
     // When question has no title in details page, default to title of the story it associates with.
     newsObserver.assertValue(news -> news.getQuestions(0).getTitle().equals(storyTitle));
@@ -45,8 +46,8 @@ public class ZhihuDailyOfficial_ConvertToNewsTest {
 
   @Test
   public void testEmptyQuestionTitle() throws IOException {
-    triple = setUpTriple("html/empty_question_title.html");
-    ZhihuDailyOfficial.convertToNews(triple).subscribe(newsObserver);
+    tuple = setUpTuple("html/empty_question_title.html");
+    official.toNews(tuple).subscribe(newsObserver);
 
     // When question has empty title in details page, default to title of the story it associates with.
     newsObserver.assertValue(news -> news.getQuestions(0).getTitle().equals(storyTitle));
@@ -56,8 +57,8 @@ public class ZhihuDailyOfficial_ConvertToNewsTest {
 
   @Test
   public void testNoQuestionUrl() throws IOException {
-    triple = setUpTriple("html/no_question_url.html");
-    ZhihuDailyOfficial.convertToNews(triple).subscribe(newsObserver);
+    tuple = setUpTuple("html/no_question_url.html");
+    official.toNews(tuple).subscribe(newsObserver);
 
     newsObserver.assertNoValues();
     newsObserver.assertComplete();
@@ -65,8 +66,8 @@ public class ZhihuDailyOfficial_ConvertToNewsTest {
 
   @Test
   public void testInvalidQuestionUrl() throws IOException {
-    triple = setUpTriple("html/invalid_question_url.html");
-    ZhihuDailyOfficial.convertToNews(triple).subscribe(newsObserver);
+    tuple = setUpTuple("html/invalid_question_url.html");
+    official.toNews(tuple).subscribe(newsObserver);
 
     newsObserver.assertNoValues();
     newsObserver.assertComplete();
@@ -74,8 +75,8 @@ public class ZhihuDailyOfficial_ConvertToNewsTest {
 
   @Test
   public void testNormalScenario() throws IOException {
-    triple = setUpTriple("html/normal.html");
-    ZhihuDailyOfficial.convertToNews(triple).subscribe(newsObserver);
+    tuple = setUpTuple("html/normal.html");
+    official.toNews(tuple).subscribe(newsObserver);
 
     newsObserver.assertValue(news -> {
       boolean sizeMatch = news.getQuestionsCount() == 2;
@@ -93,7 +94,7 @@ public class ZhihuDailyOfficial_ConvertToNewsTest {
     newsObserver.assertComplete();
   }
 
-  private Triple<String, Story, Document> setUpTriple(String fileName) throws IOException {
+  private Tuple<Story, Document> setUpTuple(String fileName) throws IOException {
     Story story = Story.newBuilder()
         .setId(1)
         .setTitle(storyTitle)
@@ -102,6 +103,6 @@ public class ZhihuDailyOfficial_ConvertToNewsTest {
 
     Document document = Jsoup.parse(Commons.openInputStream(fileName), null, "");
 
-    return Triple.create(date, story, document);
+    return Tuple.create(story, document);
   }
 }

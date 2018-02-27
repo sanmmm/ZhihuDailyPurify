@@ -26,7 +26,7 @@ android_library(
   deps = [
     "//third_party:android_app_dependencies",
     "//android/widgets:all_widgets",
-    "//news_fetch/android",
+    "//news_fetch/java:news_fetch_java",
     "//proto:zhihu_daily_purify_java_proto",
     "@com_google_protobuf//:protobuf_java",
   ],

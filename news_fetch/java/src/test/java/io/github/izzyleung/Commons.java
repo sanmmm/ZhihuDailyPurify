@@ -11,7 +11,7 @@ public final class Commons {
   }
 
   static InputStream openInputStream(String fileName) throws IOException {
-    return new FileInputStream(
-        System.getenv("TEST_SRCDIR") + "/ZhihuDailyPurify/news_fetch/test_files/" + fileName);
+    String base = System.getenv("TEST_SRCDIR");
+    return new FileInputStream(base + "/ZhihuDailyPurify/news_fetch/test_files/" + fileName);
   }
 }

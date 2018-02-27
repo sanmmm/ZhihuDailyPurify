@@ -1,4 +1,4 @@
-import official
+from official import ZhihuDailyOfficial
 import mongo
 
 from proto.zhihu_daily_purify_pb2 import Feed
@@ -17,7 +17,7 @@ def feed_of_date(date):
     if mongo.has_date_cached(date):
         feed = mongo.feed_for_date(date)
     else:
-        feed = official.feed_for_date(date)
+        feed = ZhihuDailyOfficial(date).feed()
         mongo.save_feed(feed)
 
     return feed.SerializeToString()

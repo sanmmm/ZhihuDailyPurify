@@ -45,7 +45,7 @@ java_library(
   deps = ["@com_google_protobuf//:protobuf_java"],
   visibility = [
     "//android/app:__subpackages__",
-    "//news_fetch/android:__subpackages__",
+    "//news_fetch/java:__subpackages__",
   ]
 )
 

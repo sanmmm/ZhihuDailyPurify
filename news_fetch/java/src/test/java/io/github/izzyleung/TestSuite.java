@@ -6,8 +6,8 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-    ZhihuDailyOfficial_StoriesTests.class,
-    ZhihuDailyOfficial_ConvertToNewsTest.class
+    Stories_FromJsonTests.class,
+    ZhihuDailyOfficial_ToNewsTest.class
 })
 public class TestSuite {
 

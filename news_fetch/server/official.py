@@ -9,31 +9,89 @@ ZHIHU_DAILY_URL = 'https://news-at.zhihu.com/api/4/news/'
 ZHIHU_DAILY_BEFORE_URL = ZHIHU_DAILY_URL + 'before/'
 
 
-def stories_for_date(date):
-    return stories_from_json(_get_text(ZHIHU_DAILY_BEFORE_URL + date))
+class Story(object):
+    def __init__(self, story_id, title, thumbnail_url):
+        super(Story, self).__init__()
+        self.story_id = story_id
+        self.title = title
+        self.thumbnail_url = thumbnail_url
+
+    @staticmethod
+    def of(date):
+        stories = Story.from_json(_http_get(ZHIHU_DAILY_BEFORE_URL + date))
+        documents = map(Story._document, stories)
+
+        return list(zip(stories, documents))
+
+    @staticmethod
+    def from_json(json_content):
+        from_zhihu = _to_json(json_content).get('stories', [])
+
+        return map(Story._convert, from_zhihu)
+
+    @staticmethod
+    def _convert(story_json):
+        story_id = story_json.get('id', 0)
+        story_title = story_json.get('title', '')
+        thumbnail_url = (story_json.get('images', []) or [''])[0]
+
+        return Story(story_id, story_title, thumbnail_url)
+
+    def _document(self):
+        json_content = _json_from_url(ZHIHU_DAILY_URL + str(self.story_id))
+        body = json_content.get('body', '')
+
+        return BeautifulSoup(body, 'html.parser')
 
 
-def document_for_story(story):
-    return BeautifulSoup(
-        _json_from_url(ZHIHU_DAILY_URL + str(story.story_id)).get('body', ''),
-        'html.parser'
-    )
+class ZhihuDailyOfficial(object):
+    def __init__(self, date):
+        super(ZhihuDailyOfficial, self).__init__()
+        self.date = date
 
+    def feed(self):
+        pairs = Story.of(self.date)
+        news = [self.to_news(pair) for pair in pairs]
 
-def feed_for_date(date):
-    stories = stories_for_date(date)
-    documents = map(document_for_story, stories)
-    pairs = list(zip(stories, documents))
+        feed = Feed()
+        feed.news.extend([n for n in news if n])
 
-    feed = Feed()
-    feed.news.extend(
-        filter(
-            lambda n: len(n.questions) > 0,
-            [to_news(p, date) for p in pairs]
-        )
-    )
+        return feed
 
-    return feed
+    def to_news(self, pair):
+        story, document = pair
+        questions = ZhihuDailyOfficial._questions(pair)
+
+        news = News()
+
+        news.date = self.date
+        news.title = story.title
+        news.thumbnailUrl = story.thumbnail_url
+        news.questions.extend([q for q in questions if q])
+
+        return news if news.questions else None
+
+    @staticmethod
+    def _questions(pair):
+        story, document = pair
+        elements = _get_question_elements(document)
+
+        return [ZhihuDailyOfficial._to_question(e, story) for e in elements]
+
+    @staticmethod
+    def _to_question(question_element, story):
+        question = Question()
+
+        question.title = _question_title(question_element, story)
+        question.url = _question_url(question_element)
+
+        url_valid = ZhihuDailyOfficial._is_question_url_valid(question.url)
+
+        return question if url_valid else None
+
+    @staticmethod
+    def _is_question_url_valid(question_url):
+        return 'zhihu.com/question/' in question_url
 
 
 def _to_json(content):
@@ -43,55 +101,12 @@ def _to_json(content):
         return {}
 
 
-def _get_text(url):
+def _http_get(url):
     return requests.get(url, headers={'User-Agent': 'Mozilla/5.0'}).text
 
 
 def _json_from_url(url):
-    return _to_json(_get_text(url))
-
-
-def stories_from_json(text):
-    return list(map(lambda s: _to_story(s), _to_json(text).get('stories', [])))
-
-
-def _to_story(story_json):
-    story_id = story_json.get('id', 0)
-    story_title = story_json.get('title', '')
-    thumbnail_url = (story_json.get('images', []) or [''])[0]
-    return Story(story_id, story_title, thumbnail_url)
-
-
-def to_news(pair, date):
-    story, document = pair
-    elements = _get_question_elements(document)
-
-    news = News()
-
-    news.date = date
-    news.title = story.title
-    news.thumbnailUrl = story.thumbnail_url
-    news.questions.extend(
-        filter(
-            lambda q: _is_question_url_valid(q.url),
-            [_to_question(element, story) for element in elements]
-        )
-    )
-
-    return news
-
-
-def _to_question(question_element, story):
-    question = Question()
-
-    question.title = _question_title(question_element, story)
-    question.url = _question_url(question_element)
-
-    return question
-
-
-def _is_question_url_valid(question_url):
-    return 'zhihu.com/question/' in question_url
+    return _to_json(_http_get(url))
 
 
 def _get_question_elements(document):
@@ -110,11 +125,3 @@ def _question_title_element(element):
 
 def _question_url(element):
     return (element.select_one('div.view-more a') or {}).get('href', '')
-
-
-class Story(object):
-    def __init__(self, story_id, title, thumbnail_url):
-        super(Story, self).__init__()
-        self.story_id = story_id
-        self.title = title
-        self.thumbnail_url = thumbnail_url

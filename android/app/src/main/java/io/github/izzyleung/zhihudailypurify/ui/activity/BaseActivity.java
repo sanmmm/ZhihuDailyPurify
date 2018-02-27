@@ -10,34 +10,35 @@ import android.view.MenuItem;
 import io.github.izzyleung.zhihudailypurify.R;
 
 public abstract class BaseActivity extends AppCompatActivity {
-    protected CoordinatorLayout coordinatorLayout;
-    protected Toolbar toolbar;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+  protected CoordinatorLayout coordinatorLayout;
+  protected Toolbar toolbar;
 
-        setContentView(layoutResId());
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
 
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+    setContentView(layoutResId());
 
-        coordinatorLayout = findViewById(R.id.coordinator_layout);
+    toolbar = findViewById(R.id.toolbar);
+    setSupportActionBar(toolbar);
+
+    coordinatorLayout = findViewById(R.id.coordinator_layout);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    if (item.getItemId() == android.R.id.home) {
+      onBackPressed();
+      return true;
+    } else {
+      return super.onOptionsItemSelected(item);
     }
+  }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
-            return true;
-        } else {
-            return super.onOptionsItemSelected(item);
-        }
-    }
+  public void showSnackbar(int resId) {
+    Snackbar.make(coordinatorLayout, resId, Snackbar.LENGTH_SHORT).show();
+  }
 
-    public void showSnackbar(int resId) {
-        Snackbar.make(coordinatorLayout, resId, Snackbar.LENGTH_SHORT).show();
-    }
-
-    protected abstract int layoutResId();
+  protected abstract int layoutResId();
 }
