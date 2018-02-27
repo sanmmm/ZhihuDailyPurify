@@ -1,4 +1,4 @@
-import os
+from os import path
 
 from six.moves import configparser
 from pymongo import MongoClient, ASCENDING, DESCENDING
@@ -98,12 +98,8 @@ def _query_collection(criteria):
 def _news_collection():
     config = configparser.ConfigParser()
 
-    if os.path.exists('/.dockerenv'):
-        config_file_path = '/app/server/database.ini'
-    else:
-        config_file_path = './server/database.ini'
-
-    config.read(config_file_path)
+    bath_path = '/app' if path.exists('/.dockerenv') else '.'
+    config.read(bath_path + '/news_fetch/server/database.ini')
 
     uri = config.get('Database', 'URI')
     user = config.get('Credential', 'User')

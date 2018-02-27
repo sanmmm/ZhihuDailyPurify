@@ -1,6 +1,6 @@
-import requests
 import json
 
+from six.moves.urllib import request
 from bs4 import BeautifulSoup
 
 from proto.zhihu_daily_purify_pb2 import News, Question, Feed
@@ -102,7 +102,9 @@ def _to_json(content):
 
 
 def _http_get(url):
-    return requests.get(url, headers={'User-Agent': 'Mozilla/5.0'}).text
+    req = request.Request(url)
+    req.add_header('User-Agent', 'Mozilla/5.0')
+    return request.urlopen(req).read()
 
 
 def _json_from_url(url):

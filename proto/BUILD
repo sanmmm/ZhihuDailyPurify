@@ -8,6 +8,7 @@ objc_library(
     "@com_google_protobuf//:protobuf_objc",
     "@com_google_protobuf//:objectivec",
   ],
+  visibility = ["//news_fetch/objc:__subpackages__"],
 )
 
 genrule(
@@ -28,7 +29,10 @@ py_library(
     requirement("six"),
     requirement("protobuf"),
   ],
-  visibility = ["//news_fetch/server:__subpackages__"],
+  visibility = [
+    "//news_fetch/server:__subpackages__",
+    "//news_fetch/python:__subpackages__",
+  ],
 )
 
 genrule(

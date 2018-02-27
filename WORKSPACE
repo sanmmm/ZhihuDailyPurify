@@ -36,7 +36,7 @@ load("@io_bazel_rules_python//python:pip.bzl", "pip_import")
 
 pip_import(
   name = "pip_dependencies",
-  requirements = "//news_fetch/server:requirements.txt",
+  requirements = "//third_party:requirements.txt",
 )
 
 load("@pip_dependencies//:requirements.bzl", "pip_install")
