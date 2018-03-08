@@ -1,5 +1,3 @@
-load("@pip_dependencies//:requirements.bzl", "requirement")
-
 objc_library(
   name = "zhihu_daily_purify_objc_proto",
   srcs = [":zhihu_daily_purify_proto_compiled_objc"],
@@ -26,8 +24,8 @@ py_library(
   name = "zhihu_daily_purify_py_proto",
   srcs = [":zhihu_daily_purify_proto_compiled_python"],
   deps = [
-    requirement("six"),
-    requirement("protobuf"),
+    "@pypi_six//:six",
+    "@protobuf_python//:protobuf_python",
   ],
   visibility = [
     "//news_fetch/server:__subpackages__",

@@ -1,5 +1,3 @@
-load("@pip_dependencies//:requirements.bzl", "requirement")
-
 load("@io_bazel_rules_docker//python:image.bzl", "py_image")
 load("@io_bazel_rules_docker//container:container.bzl", "container_image")
 
@@ -16,10 +14,10 @@ py_binary(
   deps = [
     "//news_fetch/python:news_fetch_python",
     "//proto:zhihu_daily_purify_py_proto",
-    requirement("pytz"),
-    requirement("pymongo"),
-    requirement("Tornado"),
-    requirement("six"),
+    "@pytz//:pytz",
+    "@pypi_bottle//:bottle",
+    "@pypi_pymongo//:pymongo",
+    "@pypi_six//:six",
   ],
 )
 

@@ -237,23 +237,122 @@ def generate_other_android_dependencies():
         ]
     )
 
+# Python Dependencies from PyPI
+def generate_python_pypi_dependencies():
+    native.new_http_archive(
+        name = "pytz",
+        url = "https://pypi.python.org/packages/1b/50/4cdc62fc0753595fc16c8f722a89740f487c6e5670c644eb8983946777be/pytz-2018.3.tar.gz",
+        build_file_content = """
+py_library(
+    name = "pytz",
+    srcs = glob(["*.py"]),
+    data = glob(["zoneinfo/**/*"]),
+    visibility = ["//visibility:public"],
+)
+        """,
+        strip_prefix = "pytz-2018.3/pytz",
+    )
+
+    native.new_http_archive(
+        name = "bs4",
+        url = "https://pypi.python.org/packages/fa/8d/1d14391fdaed5abada4e0f63543fef49b8331a34ca60c88bd521bcf7f782/beautifulsoup4-4.6.0.tar.gz",
+        build_file_content = """
+py_library(
+    name = "bs4",
+    srcs = glob([
+        "*.py",
+        "builder/__init__.py",
+        "builder/_htmlparser.py",
+    ], exclude=[
+        "testing.py",
+        "diagnose.py",
+    ]),
+    visibility = ["//visibility:public"],
+)
+        """,
+        strip_prefix = "beautifulsoup4-4.6.0/bs4",
+    )
+
+    native.new_http_archive(
+        name = "pypi_pymongo",
+        url = "https://pypi.python.org/packages/69/8a/2384c55f4bd494eeb6104a9b35c36714ba1178dcd08ee5a73b92eed3d8c1/pymongo-3.6.0.tar.gz",
+        build_file_content = """
+package(default_visibility = ["//visibility:public"])
+
+py_library(
+    name = "bson",
+    srcs = glob(["bson/*.py"]),
+)
+
+py_library(
+    name = "gridfs",
+    srcs = glob(["gridfs/*.py"]),
+)
+
+py_library(
+    name = "pymongo",
+    srcs = glob(["pymongo/*.py"]),
+    deps = [
+        ":bson",
+        ":gridfs",
+    ],
+)
+        """,
+        strip_prefix = "pymongo-3.6.0",
+    )
+
+    native.new_http_archive(
+        name = "pypi_six",
+        url = "https://pypi.python.org/packages/16/d8/bc6316cf98419719bd59c91742194c111b6f2e85abac88e496adefaf7afe/six-1.11.0.tar.gz",
+        build_file_content = """
+py_library(
+    name = "six",
+    srcs = ["six.py"],
+    visibility = ["//visibility:public"],
+)
+        """,
+        strip_prefix = "six-1.11.0",
+    )
+
+    native.new_http_archive(
+        name = "pypi_bottle",
+        url = "https://pypi.python.org/packages/bd/99/04dc59ced52a8261ee0f965a8968717a255ea84a36013e527944dbf3468c/bottle-0.12.13.tar.gz",
+        build_file_content = """
+py_library(
+    name = "bottle",
+    srcs = ["bottle.py"],
+    visibility = ["//visibility:public"],
+)
+        """,
+        strip_prefix = "bottle-0.12.13",
+    )
+
+    native.new_http_archive(
+        name = "protobuf_python",
+        url = "https://pypi.python.org/packages/14/03/ff5279abda7b46e9538bfb1411d42831b7e65c460d73831ed2445649bc02/protobuf-3.5.1.tar.gz",
+        build_file_content = """
+py_library(
+    name = "protobuf_python",
+    srcs = glob(["google/protobuf/**/*.py"]),
+    visibility = ["//visibility:public"],
+    imports = [
+        "@pypi_six//:six",
+    ],
+)
+        """,
+        strip_prefix = "protobuf-3.5.1",
+    )
+
 # Protobuf
 def setup_protobuf():
     native.http_archive(
         name = "com_google_protobuf",
-        sha256 = "cef7f1b5a7c5fba672bec2a319246e8feba471f04dcebfe362d55930ee7c1c30",
-        strip_prefix = "protobuf-3.5.0",
-        urls = ["https://github.com/google/protobuf/archive/v3.5.0.zip"],
+        sha256 = "1f8b9b202e9a4e467ff0b0f25facb1642727cdf5e69092038f15b37c75b99e45",
+        strip_prefix = "protobuf-3.5.1",
+        urls = ["https://github.com/google/protobuf/archive/v3.5.1.zip"],
     )
 
 # Bazel rules
-def setup_rules_python():
-    native.http_archive(
-        name = "io_bazel_rules_python",
-        strip_prefix = "rules_python-master",
-        url = "https://github.com/bazelbuild/rules_python/archive/master.zip",
-    )
-
 def setup_rules_docker():
     native.http_archive(
         name = "io_bazel_rules_docker",

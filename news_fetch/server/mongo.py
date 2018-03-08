@@ -56,7 +56,7 @@ def _dict_to_question(d):
 
 
 def save_feed(feed):
-    pairs = zip(range(len(feed.news)), feed.news)
+    pairs = list(zip(range(len(feed.news)), feed.news))
     news_list = [_news_to_dict(pair) for pair in pairs]
     _news_collection().insert_many(news_list)
 

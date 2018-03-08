@@ -1,7 +1,6 @@
 from os import environ
 
-from tornado.web import RequestHandler, Application
-from tornado.ioloop import IOLoop
+from bottle import route, run, request
 
 from proto.zhihu_daily_purify_pb2 import Feed
 from news_fetch.python.official import ZhihuDailyOfficial
@@ -9,22 +8,12 @@ from news_fetch.server import mongo
 from news_fetch.server.datetimechina import DateTimeChina
 
 
-class IndexHandler(RequestHandler):
-    def get(self):
-        self.write("Index")
+@route('/')
+def index():
+    return 'Index'
 
 
-class FeedHandler(RequestHandler):
-    def get(self, date):
-        self.write(_feed_of(date))
-
-
-class SearchHandler(RequestHandler):
-    def get(self):
-        keyword = self.get_argument("q", default="")
-        self.write(_search(keyword))
-
-
+@route('/news/<date>')
 def _feed_of(date):
     dt = DateTimeChina.parse(date)
 
@@ -42,8 +31,9 @@ def _feed_of(date):
 
     return feed.SerializeToString()
 
-
-def _search(keyword):
+@route('/search/')
+def _search():
+    keyword = request.GET.get('q', '')
     return mongo.search(keyword).SerializeToString()
 
 
@@ -55,11 +45,6 @@ def _empty_feed(date):
 
 
 if __name__ == '__main__':
-    app = Application([
-        (r'/', IndexHandler),
-        (r'/news/([0-9]{8})', FeedHandler),
-        (r'/search', SearchHandler),
-    ])
-
-    app.listen(int(environ.get('PORT', 5000)), '0.0.0.0')
-    IOLoop.current().start()
+    port = int(environ.get('PORT', 5000))
+    run(host='0.0.0.0', port=port)
+    

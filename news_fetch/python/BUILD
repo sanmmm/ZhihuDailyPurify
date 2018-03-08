@@ -1,5 +1,3 @@
-load("@pip_dependencies//:requirements.bzl", "requirement")
-
 filegroup(
   name = "python_code",
   srcs = glob(["**/*.py"], exclude = ["tests.py"]),
@@ -8,13 +6,14 @@ filegroup(
 
 py_library(
   name = "news_fetch_python",
-  srcs = [":python_code"],
+  srcs = [
+    ":python_code",
+  ],
   deps = [
     "//proto:zhihu_daily_purify_py_proto",
-    requirement("beautifulsoup4"),
-    requirement("pathlib"),
-    requirement("six"),
-    requirement("protobuf"),
+    "@bs4//:bs4",
+    "@pypi_six//:six",
+    "@protobuf_python//:protobuf_python",
   ],
   visibility = ["//news_fetch/server:__subpackages__"],
 )
@@ -26,10 +25,9 @@ py_test(
   deps = [
     ":news_fetch_python",
     "//proto:zhihu_daily_purify_py_proto",
-    requirement("beautifulsoup4"),
-    requirement("pathlib"),
-    requirement("six"),
-    requirement("protobuf"),
+    "@bs4//:bs4",
+    "@pypi_six//:six",
+    "@protobuf_python//:protobuf_python",
   ],
   main = "tests.py",
   size = "small",
