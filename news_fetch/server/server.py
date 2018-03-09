@@ -16,6 +16,7 @@ def index():
 @route('/news/<date>')
 def _feed_of(date):
     dt = DateTimeChina.parse(date)
+    bypass_cache = request.GET.get('bypass_cache', '') == 'true'
 
     if dt is None or dt.is_before_birthday():
         return _empty_feed(date).SerializeToString()
@@ -23,7 +24,9 @@ def _feed_of(date):
     if dt.is_after_current_date_in_china():
         date = DateTimeChina.current_date()
 
-    if mongo.has_date_cached(date):
+    if bypass_cache:
+        feed = ZhihuDailyOfficial(date).feed()
+    elif mongo.has_date_cached(date):
         feed = mongo.feed_for_date(date)
     else:
         feed = ZhihuDailyOfficial(date).feed()

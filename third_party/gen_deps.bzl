@@ -162,18 +162,12 @@ def generate_android_support_libs_dependency(android_build_tools_version):
         name = "arch_lifecycle",
         settings = "//third_party:google_maven.xml",
         artifact = "android.arch.lifecycle:common:1.0.3",
-        deps = [
-            "@support_annotations//jar",
-        ],
     )
 
     maven_jar(
         name = "arch_core",
         settings = "//third_party:google_maven.xml",
         artifact = "android.arch.core:common:1.0.0",
-        deps = [
-            "@support_annotations//jar",
-        ],
     )
 
 
@@ -196,9 +190,6 @@ def generate_news_fetch_android_dependencies():
     maven_jar(
         name = "rxjava",
         artifact = "io.reactivex.rxjava2:rxjava:2.1.7",
-        deps = [
-            "@reactive_stream//jar"
-        ],
     )
 
     maven_jar(

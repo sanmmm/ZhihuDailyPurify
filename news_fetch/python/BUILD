@@ -11,6 +11,7 @@ py_library(
   ],
   deps = [
     "//proto:zhihu_daily_purify_py_proto",
+    "@pypi_certifi//:certifi",
     "@bs4//:bs4",
     "@pypi_six//:six",
     "@protobuf_python//:protobuf_python",

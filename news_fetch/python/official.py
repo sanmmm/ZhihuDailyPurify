@@ -1,4 +1,5 @@
 import json
+import certifi
 
 from six.moves.urllib import request
 from bs4 import BeautifulSoup
@@ -104,7 +105,7 @@ def _to_json(content):
 def _http_get(url):
     req = request.Request(url)
     req.add_header('User-Agent', 'Mozilla/5.0')
-    return request.urlopen(req).read()
+    return request.urlopen(req, cafile=certifi.where()).read()
 
 
 def _json_from_url(url):

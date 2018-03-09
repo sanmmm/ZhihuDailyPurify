@@ -3,7 +3,7 @@ load("@io_bazel_rules_docker//container:container.bzl", "container_image")
 
 filegroup(
   name = "python_code",
-  srcs = glob(["**/*.py"]),
+  srcs = glob(["**/*.py"], exclude=["smoke.py"]),
   visibility = ["//visibility:private"],
 )
 
@@ -34,4 +34,10 @@ container_image(
   directory = "/app/news_fetch/server",
   files = [":database.ini"],
   cmd = [""],
+)
+
+py_binary(
+  name = "smoke",
+  srcs = ["smoke.py"],
+  deps = ["@pypi_six//:six"],
 )
