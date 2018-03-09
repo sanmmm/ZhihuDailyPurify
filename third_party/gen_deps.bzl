@@ -343,6 +343,20 @@ py_library(
         strip_prefix = "protobuf-3.5.1",
     )
 
+    native.new_http_archive(
+        name = "pypi_certifi",
+        url = "https://pypi.python.org/packages/15/d4/2f888fc463d516ff7bf2379a4e9a552fef7f22a94147655d9b1097108248/certifi-2018.1.18.tar.gz",
+        build_file_content = """
+py_library(
+    name = "certifi",
+    srcs = glob(["certifi/*.py"], exclude=["certifi/__main__.py"]),
+    data = ["certifi/cacert.pem"],
+    visibility = ["//visibility:public"],
+)
+        """,
+        strip_prefix = "certifi-2018.1.18",
+    )
+
 # Protobuf
 def setup_protobuf():
     native.http_archive(
