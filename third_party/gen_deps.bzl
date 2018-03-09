@@ -170,7 +170,6 @@ def generate_android_support_libs_dependency(android_build_tools_version):
         artifact = "android.arch.core:common:1.0.0",
     )
 
-
 def generate_news_fetch_android_dependencies():
     maven_jar(
         name = "json",
