@@ -1,6 +1,7 @@
 objc_library(
     name = "zhihu_daily_purify_objc_proto",
-    srcs = [":zhihu_daily_purify_proto_compiled_objc"],
+    srcs = ["ZhihuDailyPurify.pbobjc.m"],
+    hdrs = ["ZhihuDailyPurify.pbobjc.h"],
     copts = ["-fno-objc-arc"],
     visibility = ["//news_fetch/objc:__subpackages__"],
     deps = [

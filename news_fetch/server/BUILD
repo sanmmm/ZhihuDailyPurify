@@ -20,7 +20,6 @@ py_binary(
         "@pypi_bottle//:bottle",
         "@pypi_pymongo//:pymongo",
         "@pypi_six//:six",
-        "@pytz",
     ],
 )
 

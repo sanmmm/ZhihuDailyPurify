@@ -230,20 +230,6 @@ def generate_other_android_dependencies():
 # Python Dependencies from PyPI
 def generate_python_pypi_dependencies():
     native.new_http_archive(
-        name = "pytz",
-        url = "https://pypi.python.org/packages/1b/50/4cdc62fc0753595fc16c8f722a89740f487c6e5670c644eb8983946777be/pytz-2018.3.tar.gz",
-        build_file_content = """
-py_library(
-    name = "pytz",
-    srcs = glob(["*.py"]),
-    data = glob(["zoneinfo/**/*"]),
-    visibility = ["//visibility:public"],
-)
-        """,
-        strip_prefix = "pytz-2018.3/pytz",
-    )
-
-    native.new_http_archive(
         name = "bs4",
         url = "https://pypi.python.org/packages/fa/8d/1d14391fdaed5abada4e0f63543fef49b8331a34ca60c88bd521bcf7f782/beautifulsoup4-4.6.0.tar.gz",
         build_file_content = """

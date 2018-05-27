@@ -34,7 +34,9 @@ class Story(object):
     def _convert(story_json):
         story_id = story_json.get('id', 0)
         story_title = story_json.get('title', '')
-        thumbnail_url = (story_json.get('images', []) or [''])[0]
+
+        thumbnails = story_json.get('images', [''])
+        thumbnail_url = '' if not thumbnails else thumbnails[0]
 
         return Story(story_id, story_title, thumbnail_url)
 
@@ -42,7 +44,7 @@ class Story(object):
         json_content = _json_from_url(ZHIHU_DAILY_URL + str(self.story_id))
         body = json_content.get('body', '')
 
-        return BeautifulSoup(body, 'html.parser')
+        return _soup(body)
 
 
 class ZhihuDailyOfficial(object):
@@ -108,23 +110,30 @@ def _http_get(url):
     return request.urlopen(req, cafile=certifi.where()).read()
 
 
+def _soup(ingridients):
+    return BeautifulSoup(ingridients, 'html.parser')
+
+
 def _json_from_url(url):
     return _to_json(_http_get(url))
 
 
 def _get_question_elements(document):
-    return document.find_all('div', attrs={'class': 'question'})
+    return document.select('div.question')
 
 
 def _question_title(element, story):
-    title_element = _question_title_element(element)
-    from_html = (title_element or BeautifulSoup('', 'html.parser')).get_text()
-    return from_html or story.title
+    question_title = _question_title_element(element).get_text()
+    return question_title or story.title
 
 
 def _question_title_element(element):
-    return element.find('h2', attrs={'class': 'question-title'})
+    return element.select_one('h2.question-title') or _soup('')
 
 
 def _question_url(element):
-    return (element.select_one('div.view-more a') or {}).get('href', '')
+    return _question_url_element(element).get('href', '')
+
+
+def _question_url_element(element):
+    return element.select_one('div.view-more a') or {}

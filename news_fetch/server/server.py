@@ -19,7 +19,7 @@ def _feed_of(date):
     bypass_cache = request.GET.get('bypass_cache', '') == 'true'
 
     if dt is None or dt.is_before_birthday():
-        return _empty_feed(date).SerializeToString()
+        return Feed().SerializeToString()
 
     if dt.is_after_current_date_in_china():
         date = DateTimeChina.current_date()
@@ -38,13 +38,6 @@ def _feed_of(date):
 def _search():
     keyword = request.GET.get('q', '')
     return mongo.search(keyword).SerializeToString()
-
-
-def _empty_feed(date):
-    feed = Feed()
-    feed.date = date
-
-    return feed
 
 
 if __name__ == '__main__':
