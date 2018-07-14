@@ -29,12 +29,12 @@ __Disclaimer - 声明__
 Set `ANDROID_HOME` environment variable properly - 将 `ANDROID_HOME` 环境变量指向你的 Android SDK 目录  
 
 ## Build - 构建
-`bazel build //...`  
+`bazel build android`  
 
 ## What's special - 有何特殊
   - Correct and fast incremental build using [bazel](bazel.build) - 使用 [bazel](bazel.build) 以获得快速又可靠的增量构建
   - Build __hermit__ docker image without docker - 不使用 docker 却可获得完密的 docker 镜像
-    - https://github.com/izzyleung/ZhihuDailyPurify/tree/master/server/README.md
+    - See: https://github.com/izzyleung/ZhihuDailyPurify/tree/master/server/README.md
   - A demonstrative nano mono repo - 一个示范性的小型单仓库代码库
 
 ## App Design Principles - App 设计理念
