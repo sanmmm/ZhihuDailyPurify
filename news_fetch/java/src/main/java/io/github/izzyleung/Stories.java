@@ -1,7 +1,6 @@
 package io.github.izzyleung;
 
-import io.github.izzyleung.utils.Network;
-import io.github.izzyleung.utils.Tuple;
+import com.google.auto.value.AutoValue;
 import io.reactivex.Flowable;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,29 +13,29 @@ import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-public class Stories {
+class Stories {
 
   private Stories() {
 
   }
 
-  static Flowable<Tuple<Story, Document>> of(String date) throws IOException {
-    Flowable<Story> stories = Stories.fromJson(Stories.storiesOf(date));
-    Flowable<Document> documents = stories.map(Stories::details).flatMap(Stories::documents);
+  static Flowable<Story> of(String date) throws IOException {
+    Flowable<Story.Metadata> metadata = Stories.metadataFromJson(Stories.metadataJsonOf(date));
+    Flowable<Document> documents = metadata.map(Stories::details).flatMap(Stories::documents);
 
-    return Flowable.zip(stories, documents, Tuple::create);
+    return Flowable.zip(metadata, documents, Story::create);
   }
 
-  static Flowable<Story> fromJson(InputStream in) {
+  static Flowable<Story.Metadata> metadataFromJson(InputStream in) {
     return Flowable.just(mkString(in))
         .map(JSONObject::new)
         .filter(j -> j.has(ZhihuDaily.KEY_STORIES))
         .map(j -> j.getJSONArray(ZhihuDaily.KEY_STORIES))
         .flatMap(j -> Flowable.fromArray(toArray(j)))
-        .flatMap(Stories::toStory);
+        .flatMap(Stories::toMetadata);
   }
 
-  private static Flowable<Story> toStory(JSONObject j) throws JSONException {
+  private static Flowable<Story.Metadata> toMetadata(JSONObject j) throws JSONException {
     Flowable<Integer> id = Flowable.just(j.getInt(ZhihuDaily.KEY_ID));
     Flowable<String> title = Flowable.just(j.getString(ZhihuDaily.KEY_TITLE));
     Flowable<String> thumbnailUrl = Flowable.just(j)
@@ -47,7 +46,7 @@ public class Stories {
         .switchIfEmpty(Flowable.just(""));
 
     return Flowable.zip(id, title, thumbnailUrl, (storyId, storyTitle, url) ->
-            Story.newBuilder()
+            Story.Metadata.newBuilder()
                 .setId(storyId)
                 .setTitle(storyTitle)
                 .setThumbnailUrl(url)
@@ -55,12 +54,12 @@ public class Stories {
         );
   }
 
-  private static InputStream storiesOf(String date) throws IOException {
+  private static InputStream metadataJsonOf(String date) throws IOException {
     return Network.openInputStream(ZhihuDaily.ZHIHU_DAILY_NEWS_BEFORE + date);
   }
 
-  private static InputStream details(Story story) throws IOException {
-    return Network.openInputStream(ZhihuDaily.ZHIHU_DAILY_NEWS_BASE + story.id());
+  private static InputStream details(Story.Metadata metadata) throws IOException {
+    return Network.openInputStream(ZhihuDaily.ZHIHU_DAILY_NEWS_BASE + metadata.id());
   }
 
   private static Flowable<Document> documents(InputStream in) {
@@ -97,5 +96,43 @@ public class Stories {
     private static final String KEY_TITLE = "title";
     private static final String KEY_IMAGES = "images";
     private static final String KEY_BODY = "body";
+  }
+}
+
+@AutoValue
+abstract class Story {
+
+  abstract Metadata metadata();
+
+  abstract Document document();
+
+  static Story create(final Metadata metadata, final Document document) {
+    return new AutoValue_Story(metadata, document);
+  }
+
+  @AutoValue
+  static abstract class Metadata {
+
+    abstract int id();
+
+    abstract String title();
+
+    abstract String thumbnailUrl();
+
+    static Builder newBuilder() {
+      return new AutoValue_Story_Metadata.Builder();
+    }
+
+    @AutoValue.Builder
+    abstract static class Builder {
+
+      abstract Builder setId(final int id);
+
+      abstract Builder setTitle(final String title);
+
+      abstract Builder setThumbnailUrl(final String thumbnailUrl);
+
+      public abstract Metadata build();
+    }
   }
 }

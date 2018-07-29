@@ -2,7 +2,6 @@ package io.github.izzyleung;
 
 import com.google.auto.value.AutoValue;
 import io.github.izzyleung.ZhihuDailyPurify.News;
-import io.github.izzyleung.utils.Tuple;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
 import java.io.IOException;
@@ -22,31 +21,31 @@ public abstract class ZhihuDailyOfficial {
   }
 
   public Single<ZhihuDailyPurify.Feed> feed() throws IOException {
-    Flowable<Tuple<Story, Document>> tuples = Stories.of(this.date());
+    Flowable<Story> stories = Stories.of(this.date());
 
     Single<ZhihuDailyPurify.Feed.Builder> builder = Single.just(ZhihuDailyPurify.Feed.newBuilder());
-    Single<List<ZhihuDailyPurify.News>> news = tuples.flatMap(this::toNews).toList();
+    Single<List<ZhihuDailyPurify.News>> news = stories.flatMap(this::newsFrom).toList();
 
     return Single.zip(builder, news, (b, n) -> b.addAllNews(n).build());
   }
 
-  Flowable<News> toNews(Tuple<Story, Document> tuple) {
-    return questions(tuple)
+  Flowable<News> newsFrom(Story story) {
+    return questionsFrom(story)
         .filter(qs -> !qs.isEmpty())
         .map(qs -> ZhihuDailyPurify.News
             .newBuilder()
             .setDate(this.date())
-            .setTitle(tuple.left().title())
-            .setThumbnailUrl(tuple.left().thumbnailUrl())
+            .setTitle(story.metadata().title())
+            .setThumbnailUrl(story.metadata().thumbnailUrl())
             .addAllQuestions(qs)
             .build())
         .toFlowable();
   }
 
-  private static Single<List<ZhihuDailyPurify.Question>> questions(Tuple<Story, Document> tuple) {
-    String dailyTitle = tuple.left().title();
+  private static Single<List<ZhihuDailyPurify.Question>> questionsFrom(Story story) {
+    String dailyTitle = story.metadata().title();
 
-    return Flowable.fromIterable(questionElementsFrom(tuple.right()))
+    return Flowable.fromIterable(questionElementsFrom(story.document()))
         .map(questionElement ->
             ZhihuDailyPurify.Question
                 .newBuilder()

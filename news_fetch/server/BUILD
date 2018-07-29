@@ -37,9 +37,3 @@ container_image(
     directory = "/app/news_fetch/server",
     files = [":database.ini"],
 )
-
-py_binary(
-    name = "smoke",
-    srcs = ["smoke.py"],
-    deps = ["@pypi_six//:six"],
-)

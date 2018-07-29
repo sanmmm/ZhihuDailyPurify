@@ -11,73 +11,75 @@ ZHIHU_DAILY_BEFORE_URL = ZHIHU_DAILY_URL + 'before/'
 
 
 class Story(object):
-    def __init__(self, story_id, title, thumbnail_url):
-        super(Story, self).__init__()
-        self.story_id = story_id
-        self.title = title
-        self.thumbnail_url = thumbnail_url
+    def __init__(self, pair):
+        metadata, document = pair
+        self.metadata = metadata
+        self.document = document
 
     @staticmethod
     def of(date):
-        stories = Story.from_json(_http_get(ZHIHU_DAILY_BEFORE_URL + date))
-        documents = map(Story._document, stories)
+        metadata = Story.Metadata.from_json(_http_get(ZHIHU_DAILY_BEFORE_URL + date))
+        documents = map(Story._document_for, metadata)
 
-        return list(zip(stories, documents))
-
-    @staticmethod
-    def from_json(json_content):
-        from_zhihu = _to_json(json_content).get('stories', [])
-
-        return map(Story._convert, from_zhihu)
+        return [Story(p) for p in zip(metadata, documents)]
 
     @staticmethod
-    def _convert(story_json):
-        story_id = story_json.get('id', 0)
-        story_title = story_json.get('title', '')
-
-        thumbnails = story_json.get('images', [''])
-        thumbnail_url = '' if not thumbnails else thumbnails[0]
-
-        return Story(story_id, story_title, thumbnail_url)
-
-    def _document(self):
-        json_content = _json_from_url(ZHIHU_DAILY_URL + str(self.story_id))
+    def _document_for(metadata):
+        json_content = _json_from_url(ZHIHU_DAILY_URL + str(metadata.story_id))
         body = json_content.get('body', '')
 
         return _soup(body)
 
+    class Metadata(object):
+        def __init__(self, story_id, title, thumbnail_url):
+            self.story_id = story_id
+            self.title = title
+            self.thumbnail_url = thumbnail_url
+
+        @staticmethod
+        def from_json(json_content):
+            from_zhihu = _to_json(json_content).get('stories', [])
+
+            return map(Story.Metadata._convert, from_zhihu)
+
+        @staticmethod
+        def _convert(story_json):
+            story_id = story_json.get('id', 0)
+            title = story_json.get('title', '')
+
+            thumbnails = story_json.get('images', [])
+            thumbnail_url = (thumbnails or [''])[0]
+
+            return Story.Metadata(story_id, title, thumbnail_url)
+
 
 class ZhihuDailyOfficial(object):
     def __init__(self, date):
-        super(ZhihuDailyOfficial, self).__init__()
         self.date = date
 
     def feed(self):
-        pairs = Story.of(self.date)
-        news = [self.to_news(pair) for pair in pairs]
+        news = [self.to_news(story) for story in Story.of(self.date)]
 
         feed = Feed()
         feed.news.extend([n for n in news if n])
 
         return feed
 
-    def to_news(self, pair):
-        story, document = pair
-        questions = ZhihuDailyOfficial._questions(pair)
+    def to_news(self, story):
+        questions = ZhihuDailyOfficial._questions(story)
 
         news = News()
 
         news.date = self.date
-        news.title = story.title
-        news.thumbnailUrl = story.thumbnail_url
+        news.title = story.metadata.title
+        news.thumbnailUrl = story.metadata.thumbnail_url
         news.questions.extend([q for q in questions if q])
 
         return news if news.questions else None
 
     @staticmethod
-    def _questions(pair):
-        story, document = pair
-        elements = _get_question_elements(document)
+    def _questions(story):
+        elements = _get_question_elements(story.document)
 
         return [ZhihuDailyOfficial._to_question(e, story) for e in elements]
 
@@ -85,7 +87,7 @@ class ZhihuDailyOfficial(object):
     def _to_question(question_element, story):
         question = Question()
 
-        question.title = _question_title(question_element, story)
+        question.title = _question_title(question_element) or story.metadata.title
         question.url = _question_url(question_element)
 
         url_valid = ZhihuDailyOfficial._is_question_url_valid(question.url)
@@ -122,9 +124,8 @@ def _get_question_elements(document):
     return document.select('div.question')
 
 
-def _question_title(element, story):
-    question_title = _question_title_element(element).get_text()
-    return question_title or story.title
+def _question_title(element):
+    return _question_title_element(element).get_text()
 
 
 def _question_title_element(element):
