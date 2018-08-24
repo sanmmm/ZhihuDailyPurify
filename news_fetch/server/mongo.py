@@ -56,14 +56,11 @@ def _dict_to_question(d):
 
 
 def save_feed(feed):
-    pairs = list(zip(range(len(feed.news)), feed.news))
-    news_list = [_news_to_dict(pair) for pair in pairs]
+    news_list = [_news_to_dict(i, n) for i, n in enumerate(feed.news)]
     _news_collection().insert_many(news_list)
 
 
-def _news_to_dict(pair):
-    index, news = pair
-
+def _news_to_dict(index, news):
     return {
         "index": index,
         "date": news.date,
@@ -82,7 +79,7 @@ def _question_to_dict(question):
 
 def _criteria_keyword_ignore_case(keyword):
     return {
-        "$regex": ".*" + keyword + ".*",
+        "$regex": ".*{}.*".format(keyword),
         "$options": "i",
     }
 
@@ -92,7 +89,7 @@ def _query_collection(criteria):
     search_result = collection \
         .find(criteria, {'_id': False, 'index': False}) \
         .sort([('date', DESCENDING), ('index', ASCENDING)])
-    return [r for r in search_result]
+    return list(search_result)
 
 
 def _news_collection():
