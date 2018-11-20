@@ -17,7 +17,6 @@ py_library(
         "//proto:zhihu_daily_purify_py_proto",
         "@bs4",
         "@protobuf_python",
-        "@pypi_certifi//:certifi",
         "@pypi_six//:six",
     ],
 )
