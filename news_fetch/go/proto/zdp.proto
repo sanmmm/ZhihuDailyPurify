@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package io.github.izzyleung;
+
+option go_package = "generated";
+
+import "google/api/annotations.proto";
+
+service ZhihuDailyPurifyService {
+    rpc GetNews(GetNewsRequest) returns (Feed) {
+        option (google.api.http).get = "/news/{date}";
+    }
+
+    rpc SearchNews(SearchNewsRequest) returns (Feed) {
+        option (google.api.http).get = "/news_search";
+    }
+}
+
+message GetNewsRequest {
+    string date = 1;
+}
+
+message SearchNewsRequest {
+    string query = 1;
+}
+
+message Question {
+    string title = 1;
+    string url = 2;
+}
+
+message News {
+    string date = 1;
+    string title = 2;
+    string thumbnailUrl = 3;
+    repeated Question questions = 4;
+}
+
+message Feed {
+    repeated News news = 1;
+}
